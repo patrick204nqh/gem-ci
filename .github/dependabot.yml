@@ -1,0 +1,83 @@
+# 🤖 Dependabot Configuration
+# Automated dependency updates for Ruby gems and GitHub Actions
+
+version: 2
+updates:
+  # Ruby gem dependencies
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    assignees:
+      - "patrick204nqh"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      # Ignore major version updates for stable gems
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group development dependencies
+      development:
+        patterns:
+          - "rspec*"
+          - "rubocop*"
+          - "yard*"
+          - "simplecov*"
+          - "rake*"
+          - "pry*"
+          - "debug*"
+      # Group testing dependencies
+      testing:
+        patterns:
+          - "*spec*"
+          - "*test*"
+          - "factory_bot*"
+          - "faker*"
+          - "webmock*"
+          - "vcr*"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    assignees:
+      - "patrick204nqh"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "ci/cd"
+      - "automated"
+    groups:
+      # Group official GitHub Actions
+      github-actions:
+        patterns:
+          - "actions/*"
+      # Group community actions by functionality
+      security-actions:
+        patterns:
+          - "*security*"
+          - "*codeql*"
+          - "*trivy*"
+          - "*trufflehog*"
+      quality-actions:
+        patterns:
+          - "*rubocop*"
+          - "*super-linter*"
+          - "*markdownlint*" 

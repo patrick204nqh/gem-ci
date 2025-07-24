@@ -1,4 +1,4 @@
-name: 🔒 Security Scanning
+name: 03 - Security Scanning
 
 on:
   push:
