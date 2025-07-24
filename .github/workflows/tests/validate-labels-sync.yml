@@ -2,7 +2,7 @@
 # This folder contains validation workflows that test gem-ci setup and functionality
 # These are separate from production workflows (01-08) that get copied by the CLI tool
 
-name: "🏷️ Validate Labels Synchronization"
+name: "Validate Labels Synchronization"
 on:
   workflow_dispatch:
 

@@ -1,4 +1,4 @@
-name: 06 - Release Management
+name: Release Management
 
 on:
   push:

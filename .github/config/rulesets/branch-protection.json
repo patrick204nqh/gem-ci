@@ -23,19 +23,19 @@
       "parameters": {
         "required_status_checks": [
           {
-            "context": "ci/test",
+            "context": "Test Ruby 3.2 on ubuntu-latest",
             "integration_id": null
           },
           {
-            "context": "ci/lint",
+            "context": "Test Ruby 3.3 on ubuntu-latest", 
             "integration_id": null
           },
           {
-            "context": "security/scan",
+            "context": "Code Quality and Linting",
             "integration_id": null
           },
           {
-            "context": "quality/coverage",
+            "context": "CodeQL Analysis",
             "integration_id": null
           }
         ],

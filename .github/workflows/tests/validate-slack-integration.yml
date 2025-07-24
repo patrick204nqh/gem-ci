@@ -2,7 +2,7 @@
 # This folder contains validation workflows that test gem-ci setup and functionality
 # These are separate from production workflows (01-08) that get copied by the CLI tool
 
-name: "📢 Validate Slack Integration"
+name: "Validate Slack Integration"
 on:
   workflow_dispatch:
 

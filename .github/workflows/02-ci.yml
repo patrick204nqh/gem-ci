@@ -1,4 +1,4 @@
-name: "02 - Core CI Pipeline"
+name: "Core CI Pipeline"
 
 on:
   push:
@@ -52,10 +52,10 @@ jobs:
           bundle config set --local path 'vendor/bundle'
           bundle install --jobs 4 --retry 3
           
-      - name: "🧪 Run Tests"
+      - name: "Run Tests"
         run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/rspec.xml
         
-      - name: "📊 Upload Test Results"
+      - name: "Upload Test Results"
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
@@ -63,7 +63,7 @@ jobs:
           path: tmp/rspec.xml
           reporter: java-junit
           
-      - name: "📈 Upload Coverage"
+      - name: "Upload Coverage"
         uses: codecov/codecov-action@v3
         if: matrix.ruby == '3.3' && matrix.os == 'ubuntu-latest'
         with:
@@ -72,7 +72,7 @@ jobs:
           verbose: true
 
   lint:
-    name: "Code Quality & Linting"
+    name: "Code Quality and Linting"
     runs-on: ubuntu-latest
     
     steps:
@@ -87,13 +87,13 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
           
-      - name: "🔍 Run RuboCop"
+      - name: "Run RuboCop"
         run: bundle exec rubocop --format github
         
-      - name: "📝 Check Yard Documentation"
+      - name: "Check Yard Documentation"
         run: bundle exec yard stats --list-undoc
         
-      - name: "🔒 Security Audit"
+      - name: "Security Audit"
         run: |
           gem install bundler-audit
           bundle audit --update
@@ -113,7 +113,7 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
           
-      - name: "🏗️ Build Gem"
+      - name: "Build Gem"
         run: |
           gem build *.gemspec
           ls -la *.gem

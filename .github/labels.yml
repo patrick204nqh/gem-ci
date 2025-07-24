@@ -1,78 +1,83 @@
 # 🏷️ Repository Labels Configuration
-# Standard labels for open source Ruby projects
-# Compatible with crazy-max/ghaction-github-labeler
+# This file completely manages ALL repository labels
+# Any labels not listed here will be DELETED when sync runs
 
+# === BUG REPORTS ===
 - name: "bug"
-  color: "d73a4a"
+  color: "d73a49"
   description: "Something isn't working"
 
+- name: "regression"
+  color: "d73a49"
+  description: "Previously working functionality is broken"
+
+- name: "critical"
+  color: "b60205"
+  description: "Critical issue requiring immediate attention"
+
+# === ENHANCEMENTS ===
 - name: "enhancement"
   color: "a2eeef"
   description: "New feature or request"
 
+- name: "feature"
+  color: "a2eeef"
+  description: "New feature implementation"
+
+- name: "improvement"
+  color: "a2eeef"
+  description: "Enhancement to existing functionality"
+
+# === DOCUMENTATION ===
 - name: "documentation"
   color: "0075ca"
   description: "Improvements or additions to documentation"
+
+- name: "readme"
+  color: "0075ca"
+  description: "Changes to README files"
+
+- name: "examples"
+  color: "0075ca"
+  description: "Code examples and tutorials"
+
+# === HELP & SUPPORT ===
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
 
 - name: "good first issue"
   color: "7057ff"
   description: "Good for newcomers"
 
-- name: "help wanted"
-  color: "008672"
-  description: "Extra attention is needed"
-
-- name: "dependencies"
-  color: "0366d6"
-  description: "Pull requests that update a dependency file"
-
-- name: "security"
-  color: "b60205"
-  description: "Security related issues or improvements"
-
-- name: "ci/cd"
-  color: "1d76db"
-  description: "Continuous integration and deployment"
-
-- name: "breaking change"
-  color: "d93f0b"
-  description: "Changes that break backward compatibility"
-
-- name: "needs review"
-  color: "fbca04"
-  description: "Waiting for code review"
-
-- name: "needs testing"
-  color: "f9d0c4"
-  description: "Requires additional testing"
-
-- name: "performance"
-  color: "c5def5"
-  description: "Performance improvements"
-
-- name: "refactor"
-  color: "bfe5bf"
-  description: "Code refactoring"
-
-- name: "wontfix"
-  color: "ffffff"
-  description: "This will not be worked on"
-
-- name: "duplicate"
-  color: "cfd3d7"
-  description: "This issue or pull request already exists"
-
-- name: "invalid"
-  color: "e4e669"
-  description: "This doesn't seem right"
-
 - name: "question"
   color: "d876e3"
   description: "Further information is requested"
 
-# Priority Labels
+# === WORKFLOW & PROCESS ===
+- name: "needs triage"
+  color: "fbca04"
+  description: "Needs initial review and categorization"
+
+- name: "needs review"
+  color: "fbca04"
+  description: "Awaiting code review"
+
+- name: "needs testing"
+  color: "fbca04"
+  description: "Requires manual testing"
+
+- name: "work in progress"
+  color: "fbca04"
+  description: "Currently being worked on"
+
+- name: "blocked"
+  color: "e99695"
+  description: "Blocked by external dependency"
+
+# === PRIORITY LEVELS ===
 - name: "priority: high"
-  color: "d73a4a"
+  color: "d73a49"
   description: "High priority issue"
 
 - name: "priority: medium"
@@ -83,59 +88,133 @@
   color: "0e8a16"
   description: "Low priority issue"
 
-# Size Labels
+# === SIZE LABELS ===
+- name: "size: xs"
+  color: "3cbf00"
+  description: "Extra small changes (1-10 lines)"
+
 - name: "size: small"
-  color: "c2e0c6"
-  description: "Small change or fix"
+  color: "5d9801"
+  description: "Small changes (11-50 lines)"
 
 - name: "size: medium"
-  color: "f9d0c4"
-  description: "Medium-sized change"
+  color: "a8cc8c"
+  description: "Medium changes (51-200 lines)"
 
 - name: "size: large"
-  color: "d93f0b"
-  description: "Large change or feature"
+  color: "f9d71c"
+  description: "Large changes (201-500 lines)"
 
-# Type Labels
+- name: "size: xl"
+  color: "e99695"
+  description: "Extra large changes (500+ lines)"
+
+# === TYPE CLASSIFICATION ===
 - name: "type: feature"
-  color: "84b6eb"
+  color: "a2eeef"
   description: "New feature implementation"
 
 - name: "type: bugfix"
-  color: "fc2929"
-  description: "Bug fix"
+  color: "d73a49"
+  description: "Bug fix implementation"
 
 - name: "type: maintenance"
-  color: "bfe5bf"
+  color: "fef2c0"
   description: "Maintenance and housekeeping"
 
-# Ruby Version Labels (for Ruby projects)
-- name: "ruby: 3.1"
-  color: "701516"
-  description: "Ruby 3.1 specific"
+- name: "type: refactor"
+  color: "f9d71c"
+  description: "Code refactoring"
 
-- name: "ruby: 3.2"
-  color: "a91e22"
-  description: "Ruby 3.2 specific"
+- name: "type: performance"
+  color: "0052cc"
+  description: "Performance improvements"
 
-- name: "ruby: 3.3"
+# === DEPENDENCIES ===
+- name: "dependencies"
+  color: "0366d6"
+  description: "Pull requests that update a dependency file"
+
+- name: "security"
+  color: "d73a49"
+  description: "Security-related changes"
+
+- name: "breaking change"
+  color: "b60205"
+  description: "Breaking API changes"
+
+# === PLATFORM & ENVIRONMENT ===
+- name: "ruby 3.2"
   color: "cc317c"
-  description: "Ruby 3.3 specific"
+  description: "Ruby 3.2 specific issues"
 
-# Platform Labels
-- name: "platform: windows"
-  color: "0078d4"
-  description: "Windows platform specific"
+- name: "ruby 3.3"
+  color: "cc317c"
+  description: "Ruby 3.3 specific issues"
 
-- name: "platform: macos"
-  color: "007aff"
-  description: "macOS platform specific"
+- name: "ruby 3.4"
+  color: "cc317c"
+  description: "Ruby 3.4 specific issues"
 
-- name: "platform: linux"
-  color: "fcc624"
-  description: "Linux platform specific"
+- name: "windows"
+  color: "0052cc"
+  description: "Windows specific issues"
 
-# Automation Label
+- name: "macos"
+  color: "0052cc"
+  description: "macOS specific issues"
+
+- name: "linux"
+  color: "0052cc"
+  description: "Linux specific issues"
+
+# === CI/CD & AUTOMATION ===
+- name: "ci/cd"
+  color: "0e8a16"
+  description: "Continuous integration and deployment"
+
+- name: "github actions"
+  color: "0e8a16"
+  description: "GitHub Actions workflows"
+
+- name: "automation"
+  color: "0e8a16"
+  description: "Automation improvements"
+
+- name: "testing"
+  color: "0e8a16"
+  description: "Test improvements and additions"
+
+# === STATUS LABELS ===
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "invalid"
+  color: "e4e669"
+  description: "This doesn't seem right"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "stale"
+  color: "fef2c0"
+  description: "No recent activity"
+
+- name: "on hold"
+  color: "d4c5f9"
+  description: "Temporarily paused"
+
+# === SPECIAL LABELS ===
 - name: "automated"
   color: "e1e4e8"
-  description: "Created or updated by automation" 
+  description: "Created or updated by automation"
+
+- name: "hacktoberfest"
+  color: "ff6b35"
+  description: "Hacktoberfest eligible issue"
+
+- name: "sponsored"
+  color: "ea4aaa"
+  description: "Sponsored development work" 

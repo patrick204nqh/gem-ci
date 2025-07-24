@@ -1,4 +1,4 @@
-name: 04 - Code Quality & Documentation
+name: Code Quality and Documentation
 
 on:
   push:

@@ -2,7 +2,7 @@
 # This folder contains validation workflows that test gem-ci setup and functionality
 # These are separate from production workflows (01-08) that get copied by the CLI tool
 
-name: "🛡️ Validate Repository Rulesets"
+name: "Validate Repository Rulesets"
 on:
   workflow_dispatch:
 

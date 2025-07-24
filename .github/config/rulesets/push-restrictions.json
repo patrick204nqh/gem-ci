@@ -21,11 +21,11 @@
       "parameters": {
         "required_status_checks": [
           {
-            "context": "ci/test",
+            "context": "Test Ruby 3.2 on ubuntu-latest",
             "integration_id": null
           },
           {
-            "context": "ci/lint",
+            "context": "Code Quality and Linting",
             "integration_id": null
           }
         ],
