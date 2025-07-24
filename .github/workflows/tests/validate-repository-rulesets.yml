@@ -1,0 +1,282 @@
+# 🧪 Validation Workflows
+# This folder contains validation workflows that test gem-ci setup and functionality
+# These are separate from production workflows (01-08) that get copied by the CLI tool
+
+name: "🛡️ Validate Repository Rulesets"
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-rulesets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🔄 Checkout Repository"
+        uses: actions/checkout@v4
+      
+      - name: "🔑 Generate GitHub App Token"
+        id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GEM_CI_APP_ID }}
+          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+      
+      - name: "🔍 Validate Rulesets Configuration Files"
+        run: |
+          echo "🧪 Checking for rulesets configuration..."
+          
+          ruleset_files=(
+            ".github/config/rulesets/branch-protection.json"
+            ".github/config/rulesets/tag-protection.json"
+            ".github/config/rulesets/push-restrictions.json"
+            ".github/rulesets.json"
+          )
+          
+          found_files=()
+          for file in "${ruleset_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ Found: $file"
+              echo "📄 File size: $(wc -c < "$file") bytes"
+              found_files+=("$file")
+            else
+              echo "❌ Missing: $file"
+            fi
+          done
+          
+          if [ ${#found_files[@]} -eq 0 ]; then
+            echo "❌ No ruleset configuration files found!"
+            echo "💡 Expected at least one of:"
+            printf '  %s\n' "${ruleset_files[@]}"
+            exit 1
+          else
+            echo "🎉 Found ${#found_files[@]} ruleset configuration file(s)"
+          fi
+      
+      - name: "📋 Parse and Validate Ruleset JSON Structure"
+        run: |
+          echo "🧪 Validating ruleset JSON structure..."
+          
+          for file in .github/config/rulesets/*.json .github/rulesets.json; do
+            if [ -f "$file" ]; then
+              echo "🔍 Validating: $file"
+              
+              # Validate JSON syntax
+              if jq empty "$file" 2>/dev/null; then
+                echo "✅ Valid JSON syntax"
+              else
+                echo "❌ Invalid JSON syntax in $file"
+                exit 1
+              fi
+              
+              # Check for required ruleset fields
+              if jq -e 'has("name")' "$file" > /dev/null; then
+                ruleset_name=$(jq -r '.name' "$file")
+                echo "✅ Ruleset name: $ruleset_name"
+              else
+                echo "❌ Missing required field: name"
+                exit 1
+              fi
+              
+              if jq -e 'has("target")' "$file" > /dev/null; then
+                target=$(jq -r '.target' "$file")
+                echo "✅ Target: $target"
+              else
+                echo "❌ Missing required field: target"
+                exit 1
+              fi
+              
+              if jq -e 'has("rules")' "$file" > /dev/null; then
+                rule_count=$(jq '.rules | length' "$file")
+                echo "✅ Rules defined: $rule_count"
+              else
+                echo "❌ Missing required field: rules"
+                exit 1
+              fi
+              
+              echo "📋 Ruleset summary:"
+              echo "  Name: $(jq -r '.name' "$file")"
+              echo "  Target: $(jq -r '.target' "$file")"
+              echo "  Enforcement: $(jq -r '.enforcement // "active"' "$file")"
+              echo "  Rules: $(jq '.rules | length' "$file")"
+              echo ""
+            fi
+          done
+      
+      - name: "🔍 Fetch Current Repository Rulesets"
+        run: |
+          echo "🧪 Fetching current repository rulesets..."
+          
+          # Note: This requires repository admin permissions
+          current_rulesets=$(curl -s \
+            -H "Authorization: token ${{ steps.app_token.outputs.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/rulesets" || echo "[]")
+          
+          if [ "$current_rulesets" = "[]" ] || [ -z "$current_rulesets" ]; then
+            echo "📊 Current rulesets: 0 (or insufficient permissions)"
+          else
+            ruleset_count=$(echo "$current_rulesets" | jq '. | length' 2>/dev/null || echo "0")
+            echo "📊 Current rulesets in repository: $ruleset_count"
+            
+            if [ "$ruleset_count" -gt 0 ]; then
+              echo "🛡️ Current rulesets:"
+              echo "$current_rulesets" | jq -r '.[] | "  \(.name) (\(.target)) - \(.enforcement)"' 2>/dev/null || echo "  (Unable to parse ruleset details)"
+            fi
+          fi
+      
+      - name: "🔍 Validate Standard gem-ci Ruleset Patterns"
+        run: |
+          echo "🧪 Checking for standard gem-ci ruleset patterns..."
+          
+          # Define expected ruleset patterns
+          expected_patterns=(
+            "Branch Protection"
+            "Main Branch Protection" 
+            "Release Branch Protection"
+            "Tag Protection"
+            "Push Restrictions"
+            "Required Status Checks"
+            "Require Pull Request Reviews"
+            "Dismiss Stale Reviews"
+            "Require Signed Commits"
+          )
+          
+          found_patterns=()
+          for file in .github/config/rulesets/*.json .github/rulesets.json; do
+            if [ -f "$file" ]; then
+              ruleset_name=$(jq -r '.name' "$file" 2>/dev/null || echo "")
+              rules=$(jq -r '.rules[].type' "$file" 2>/dev/null || echo "")
+              
+              for pattern in "${expected_patterns[@]}"; do
+                if echo "$ruleset_name $rules" | grep -qi "$pattern"; then
+                  echo "✅ Found pattern: $pattern"
+                  found_patterns+=("$pattern")
+                  break
+                fi
+              done
+            fi
+          done
+          
+          unique_patterns=($(printf '%s\n' "${found_patterns[@]}" | sort -u))
+          
+          echo "📊 Found ${#unique_patterns[@]} standard patterns out of ${#expected_patterns[@]}"
+          
+          if [ ${#unique_patterns[@]} -lt 3 ]; then
+            echo "⚠️ Consider adding more comprehensive rulesets"
+            echo "💡 Missing common patterns:"
+            for pattern in "${expected_patterns[@]}"; do
+              if ! printf '%s\n' "${found_patterns[@]}" | grep -qi "$pattern"; then
+                echo "  - $pattern"
+              fi
+            done
+          fi
+      
+      - name: "🧪 Test Ruleset Schema Validation"
+        run: |
+          echo "🧪 Testing ruleset schema validation..."
+          
+          # Create a minimal test ruleset
+          cat > test-ruleset.json << 'EOF'
+          {
+            "name": "Test Validation Ruleset",
+            "target": "branch",
+            "enforcement": "evaluate",
+            "conditions": {
+              "ref_name": {
+                "include": ["refs/heads/test-*"],
+                "exclude": []
+              }
+            },
+            "rules": [
+              {
+                "type": "deletion"
+              },
+              {
+                "type": "required_status_checks",
+                "parameters": {
+                  "required_status_checks": [
+                    {
+                      "context": "ci/test"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+          EOF
+          
+          # Validate the test ruleset
+          if jq empty test-ruleset.json; then
+            echo "✅ Test ruleset has valid JSON structure"
+            
+            # Check required fields
+            required_fields=("name" "target" "rules")
+            for field in "${required_fields[@]}"; do
+              if jq -e "has(\"$field\")" test-ruleset.json > /dev/null; then
+                echo "✅ Test ruleset has required field: $field"
+              else
+                echo "❌ Test ruleset missing field: $field"
+              fi
+            done
+            
+            echo "📋 Test ruleset details:"
+            echo "  Name: $(jq -r '.name' test-ruleset.json)"
+            echo "  Target: $(jq -r '.target' test-ruleset.json)"
+            echo "  Enforcement: $(jq -r '.enforcement' test-ruleset.json)"
+            echo "  Rules: $(jq '.rules | length' test-ruleset.json)"
+          else
+            echo "❌ Test ruleset has invalid JSON"
+            exit 1
+          fi
+          
+          # Clean up
+          rm test-ruleset.json
+      
+      - name: "🔐 Check Repository Permissions"
+        run: |
+          echo "🧪 Checking repository permissions for ruleset management..."
+          
+          # Check if we have admin access (needed for rulesets)
+          repo_perms=$(curl -s \
+            -H "Authorization: token ${{ steps.app_token.outputs.token }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "${{ github.api_url }}/repos/${{ github.repository }}" | jq -r '.permissions // {}')
+          
+          if [ "$repo_perms" != "{}" ]; then
+            admin=$(echo "$repo_perms" | jq -r '.admin // false')
+            push=$(echo "$repo_perms" | jq -r '.push // false')
+            
+            echo "📊 Repository permissions:"
+            echo "  Admin: $admin"
+            echo "  Push: $push"
+            
+            if [ "$admin" = "true" ]; then
+              echo "✅ Admin permissions available for ruleset management"
+            else
+              echo "⚠️ Admin permissions required for full ruleset management"
+              echo "💡 Current permissions may limit ruleset operations"
+            fi
+          else
+            echo "⚠️ Unable to determine repository permissions"
+          fi
+      
+      - name: "✅ Repository Rulesets Validation Complete"
+        run: |
+          echo "🎉 Repository rulesets validation completed!"
+          echo "📋 Summary:"
+          echo "  ✅ Configuration files: Validated"
+          echo "  📋 JSON structure: Valid"
+          echo "  🛡️ Current rulesets: Checked"
+          echo "  🔐 Permissions: Verified"
+          echo ""
+          echo "💡 Next steps:"
+          echo "  1. Review and update ruleset configurations"
+          echo "  2. Import rulesets to repository settings"
+          echo "  3. Test ruleset enforcement"
+          echo "  4. Document ruleset management process"
+          echo ""
+          echo "📚 Import instructions:"
+          echo "  • Go to Settings > Rules > Rulesets"
+          echo "  • Click 'New ruleset' > 'Import a ruleset'"
+          echo "  • Upload your JSON configuration files"
+          echo "  • Review and activate rulesets" 

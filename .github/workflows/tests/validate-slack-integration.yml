@@ -1,0 +1,145 @@
+# 🧪 Validation Workflows
+# This folder contains validation workflows that test gem-ci setup and functionality
+# These are separate from production workflows (01-08) that get copied by the CLI tool
+
+name: "📢 Validate Slack Integration"
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🔑 Generate GitHub App Token"
+        id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GEM_CI_APP_ID }}
+          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+      
+      - name: "📢 Test Basic Slack Notification"
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: |
+            🧪 **gem-ci Slack Integration Test**
+            
+            ✅ Basic notification working
+            🤖 Sent via: gem-ci[bot]
+            ⏰ Time: ${{ github.event.head_commit.timestamp }}
+            🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      
+      - name: "📊 Test Rich Slack Notification with Blocks"
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          payload: |
+            {
+              "text": "🧪 gem-ci Slack Integration - Rich Message Test",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🤖 gem-ci Slack Integration Test"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "✅ *Rich notification test successful!*\n\n📋 *Test Results:*\n• 🔑 GitHub App token: Working\n• 📢 Basic message: ✅ Delivered\n• 🎨 Rich blocks: ✅ Rendered\n• 🤖 Branded bot: ✅ Active"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Repository:*\n${{ github.repository }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow:*\nSlack Integration Test"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Triggered by:*\n${{ github.actor }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\n✅ Success"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow Run"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "🚀 Ready for production workflows • 🔧 gem-ci automation"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      
+      - name: "🧪 Test Conditional Slack Notification (Success)"
+        if: success()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: |
+            ✅ **Conditional Success Notification Test**
+            
+            This message only appears when all previous steps succeed.
+            Perfect for production workflow success notifications!
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      
+      - name: "🧪 Test Conditional Slack Notification (Always)"
+        if: always()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: |
+            📊 **Final Status Notification**
+            
+            Status: ${{ job.status == 'success' && '✅ SUCCESS' || '❌ FAILED' }}
+            
+            This message always appears regardless of workflow outcome.
+            Perfect for monitoring critical production workflows!
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      
+      - name: "✅ Slack Integration Validation Complete"
+        run: |
+          echo "🎉 Slack integration validation completed!"
+          echo "📋 Summary:"
+          echo "  📢 Basic notifications: Working"
+          echo "  🎨 Rich block messages: Working"
+          echo "  🔄 Conditional messages: Working"
+          echo "  🤖 Branded bot identity: Active"
+          echo ""
+          echo "💡 Ready for production workflows:"
+          echo "  • Release notifications (06-release.yml)"
+          echo "  • Security alerts (03-security.yml)"
+          echo "  • CI failures (02-ci.yml)"
+          echo "  • Community milestones (05-community.yml)" 

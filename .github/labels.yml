@@ -1,0 +1,141 @@
+# 🏷️ Repository Labels Configuration
+# Standard labels for open source Ruby projects
+# Compatible with crazy-max/ghaction-github-labeler
+
+- name: "bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "New feature or request"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
+
+- name: "dependencies"
+  color: "0366d6"
+  description: "Pull requests that update a dependency file"
+
+- name: "security"
+  color: "b60205"
+  description: "Security related issues or improvements"
+
+- name: "ci/cd"
+  color: "1d76db"
+  description: "Continuous integration and deployment"
+
+- name: "breaking change"
+  color: "d93f0b"
+  description: "Changes that break backward compatibility"
+
+- name: "needs review"
+  color: "fbca04"
+  description: "Waiting for code review"
+
+- name: "needs testing"
+  color: "f9d0c4"
+  description: "Requires additional testing"
+
+- name: "performance"
+  color: "c5def5"
+  description: "Performance improvements"
+
+- name: "refactor"
+  color: "bfe5bf"
+  description: "Code refactoring"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "invalid"
+  color: "e4e669"
+  description: "This doesn't seem right"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information is requested"
+
+# Priority Labels
+- name: "priority: high"
+  color: "d73a4a"
+  description: "High priority issue"
+
+- name: "priority: medium"
+  color: "fbca04"
+  description: "Medium priority issue"
+
+- name: "priority: low"
+  color: "0e8a16"
+  description: "Low priority issue"
+
+# Size Labels
+- name: "size: small"
+  color: "c2e0c6"
+  description: "Small change or fix"
+
+- name: "size: medium"
+  color: "f9d0c4"
+  description: "Medium-sized change"
+
+- name: "size: large"
+  color: "d93f0b"
+  description: "Large change or feature"
+
+# Type Labels
+- name: "type: feature"
+  color: "84b6eb"
+  description: "New feature implementation"
+
+- name: "type: bugfix"
+  color: "fc2929"
+  description: "Bug fix"
+
+- name: "type: maintenance"
+  color: "bfe5bf"
+  description: "Maintenance and housekeeping"
+
+# Ruby Version Labels (for Ruby projects)
+- name: "ruby: 3.1"
+  color: "701516"
+  description: "Ruby 3.1 specific"
+
+- name: "ruby: 3.2"
+  color: "a91e22"
+  description: "Ruby 3.2 specific"
+
+- name: "ruby: 3.3"
+  color: "cc317c"
+  description: "Ruby 3.3 specific"
+
+# Platform Labels
+- name: "platform: windows"
+  color: "0078d4"
+  description: "Windows platform specific"
+
+- name: "platform: macos"
+  color: "007aff"
+  description: "macOS platform specific"
+
+- name: "platform: linux"
+  color: "fcc624"
+  description: "Linux platform specific"
+
+# Automation Label
+- name: "automated"
+  color: "e1e4e8"
+  description: "Created or updated by automation" 

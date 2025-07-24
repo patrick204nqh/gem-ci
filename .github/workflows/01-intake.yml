@@ -1,0 +1,96 @@
+name: "01 - Issue/PR Intake & Triage"
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  auto-label:
+    name: "Auto-label Issues & PRs"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' || github.event_name == 'pull_request'
+    
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        
+      - name: "🏷️ Apply Labels Based on Files"
+        uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/labeler.yml
+
+  welcome-first-time:
+    name: "Welcome First-Time Contributors"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' || github.event_name == 'pull_request'
+    
+    steps:
+      - name: "🎉 Welcome New Contributors"
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 **Welcome to gem-ci!** 
+            
+            Thank you for opening your first issue! This project serves as the ultimate reference implementation for open-source automation using only battle-tested GitHub Actions.
+            
+            🔍 **What happens next?**
+            - Our automation will auto-label this issue based on the content
+            - A maintainer will review and respond within 24-48 hours
+            - Check out our [Contributing Guide](./CONTRIBUTING.md) for more information
+            
+            We appreciate your contribution to making OSS automation better! 🚀
+          pr-message: |
+            🎉 **Welcome to gem-ci!** 
+            
+            Thank you for your first pull request! This project showcases enterprise-grade automation using only the most reliable GitHub Actions.
+            
+            🔍 **What happens next?**
+            - Our CI pipeline will automatically run tests and quality checks
+            - Code coverage and security scans will be performed
+            - A maintainer will review your changes
+            
+            Thanks for contributing to the future of OSS automation! ✨
+
+  validate-templates:
+    name: "Validate Issue Templates"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues'
+    
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        
+      - name: "✅ Validate Issue Format"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            
+            // Check if issue has minimal required information
+            const hasDescription = body.length > 50;
+            
+            if (!hasDescription) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "👋 Thanks for opening this issue!\n\n📝 **Please provide more details** to help us understand the problem:\n- Clear description of the issue\n- Steps to reproduce (if applicable)\n- Expected vs actual behavior\n\nThis helps our automation tools and maintainers provide better support! 🚀"
+              });
+              
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['needs-more-info']
+              });
+            }

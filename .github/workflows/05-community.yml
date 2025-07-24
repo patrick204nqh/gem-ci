@@ -1,0 +1,324 @@
+name: 👥 Community Management
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened]
+  pull_request:
+    types: [opened, closed]
+  schedule:
+    # Run community management tasks daily at 1 AM UTC
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+env:
+  DAYS_BEFORE_STALE: 60
+  DAYS_BEFORE_CLOSE: 14
+
+jobs:
+  stale-management:
+    name: 🧹 Stale Issue & PR Management
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: 🔍 Manage stale issues and PRs
+        uses: actions/stale@v8
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: ${{ env.DAYS_BEFORE_STALE }}
+          days-before-close: ${{ env.DAYS_BEFORE_CLOSE }}
+          stale-issue-message: |
+            🤖 **Stale Issue Notice**
+            
+            This issue has been automatically marked as stale because it has not had recent activity. 
+            
+            **Next Steps:**
+            - If this issue is still relevant, please comment to keep it active
+            - If you have additional information, please share it
+            - If this is no longer needed, the issue will be closed in ${{ env.DAYS_BEFORE_CLOSE }} days
+            
+            Thank you for your contribution to gem-ci! 🙏
+          stale-pr-message: |
+            🤖 **Stale Pull Request Notice**
+            
+            This pull request has been automatically marked as stale because it has not had recent activity.
+            
+            **Next Steps:**
+            - If this PR is still relevant, please rebase and comment to keep it active
+            - If you need help completing this PR, please ask for assistance
+            - If this is no longer needed, the PR will be closed in ${{ env.DAYS_BEFORE_CLOSE }} days
+            
+            Thank you for your contribution to gem-ci! 🙏
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          exempt-issue-labels: 'security,bug,feature,enhancement,good-first-issue'
+          exempt-pr-labels: 'security,bug,feature,enhancement'
+          operations-per-run: 100
+
+  contributor-recognition:
+    name: 🏆 Contributor Recognition
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'merged'
+    permissions:
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🎉 Recognize contributor
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { context } = require('@actions/github');
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            
+            const contributor = pr.user.login;
+            const isFirstContribution = pr.author_association === 'FIRST_TIME_CONTRIBUTOR';
+            
+            // Check if this is their first merged PR
+            const { data: userPRs } = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${context.repo.owner}/${context.repo.repo} author:${contributor} type:pr is:merged`,
+              sort: 'created',
+              per_page: 2
+            });
+            
+            const isFirstMergedPR = userPRs.total_count === 1;
+            
+            let congratulationMessage = '';
+            
+            if (isFirstMergedPR) {
+              congratulationMessage = `🎉 **Congratulations @${contributor}!**
+              
+              This is your first merged contribution to gem-ci! Thank you for:
+              - ${pr.title}
+              - Making the project better for everyone
+              - Being part of our community
+              
+              **What's next?**
+              - Check out other [good first issues](https://github.com/${context.repo.owner}/${context.repo.repo}/labels/good-first-issue)
+              - Join our discussions and help other contributors
+              - Consider starring the repository ⭐
+              
+              Welcome to the gem-ci contributor family! 🚀`;
+            } else {
+              congratulationMessage = `🙏 **Thank you @${contributor}!**
+              
+              Another excellent contribution: "${pr.title}"
+              
+              Your continued involvement makes gem-ci better for everyone! 💎`;
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: congratulationMessage
+            });
+
+  community-health:
+    name: 📊 Community Health Metrics
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    permissions:
+      issues: read
+      pull-requests: read
+      actions: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📊 Generate community health report
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const now = new Date();
+            const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+            const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+            
+            // Get recent issues
+            const { data: recentIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              since: thirtyDaysAgo.toISOString(),
+              per_page: 100
+            });
+            
+            // Get recent PRs
+            const { data: recentPRs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              sort: 'created',
+              direction: 'desc',
+              per_page: 100
+            });
+            
+            // Filter recent PRs
+            const recentPRsFiltered = recentPRs.filter(pr => 
+              new Date(pr.created_at) >= thirtyDaysAgo
+            );
+            
+            // Calculate metrics
+            const openIssues = recentIssues.filter(issue => 
+              !issue.pull_request && issue.state === 'open'
+            ).length;
+            
+            const closedIssues = recentIssues.filter(issue => 
+              !issue.pull_request && issue.state === 'closed'
+            ).length;
+            
+            const openPRs = recentPRsFiltered.filter(pr => pr.state === 'open').length;
+            const mergedPRs = recentPRsFiltered.filter(pr => pr.merged_at).length;
+            
+            // Get unique contributors
+            const contributors = new Set();
+            [...recentIssues, ...recentPRsFiltered].forEach(item => {
+              contributors.add(item.user.login);
+            });
+            
+            const healthReport = `## 📊 Community Health Report
+            **Generated**: ${now.toISOString().split('T')[0]}
+            **Period**: Last 30 days
+            
+            ### 📈 Activity Metrics
+            - **New Issues**: ${openIssues + closedIssues}
+            - **Closed Issues**: ${closedIssues}
+            - **New Pull Requests**: ${recentPRsFiltered.length}
+            - **Merged Pull Requests**: ${mergedPRs}
+            - **Active Contributors**: ${contributors.size}
+            
+            ### 🎯 Health Indicators
+            - **Issue Resolution Rate**: ${closedIssues > 0 ? Math.round((closedIssues / (openIssues + closedIssues)) * 100) : 0}%
+            - **PR Success Rate**: ${recentPRsFiltered.length > 0 ? Math.round((mergedPRs / recentPRsFiltered.length) * 100) : 0}%
+            - **Community Growth**: ${contributors.size} active contributors
+            
+            ### 🚀 Recommendations
+            ${openIssues > 10 ? '- Consider triaging older open issues' : '✅ Issue backlog is manageable'}
+            ${mergedPRs < 5 ? '- Encourage more community contributions' : '✅ Good contribution flow'}
+            ${contributors.size < 5 ? '- Focus on contributor onboarding' : '✅ Healthy contributor diversity'}
+            `;
+            
+            console.log(healthReport);
+            
+            // Store metrics for other workflows
+            await github.rest.actions.setRepoVariable({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'COMMUNITY_HEALTH_SCORE',
+              value: Math.round(((closedIssues / Math.max(openIssues + closedIssues, 1)) + 
+                               (mergedPRs / Math.max(recentPRsFiltered.length, 1)) + 
+                               Math.min(contributors.size / 10, 1)) / 3 * 100).toString()
+            });
+
+  issue-labeling:
+    name: 🏷️ Enhanced Issue Labeling
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    permissions:
+      issues: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏷️ Smart issue labeling
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title.toLowerCase();
+            const body = issue.body ? issue.body.toLowerCase() : '';
+            const content = title + ' ' + body;
+            
+            const labels = [];
+            
+            // Classify by type
+            if (content.includes('bug') || content.includes('error') || content.includes('broken')) {
+              labels.push('bug');
+            } else if (content.includes('feature') || content.includes('enhancement')) {
+              labels.push('enhancement');
+            } else if (content.includes('documentation') || content.includes('docs')) {
+              labels.push('documentation');
+            } else if (content.includes('question') || content.includes('help')) {
+              labels.push('question');
+            }
+            
+            // Classify by priority
+            if (content.includes('critical') || content.includes('urgent') || content.includes('security')) {
+              labels.push('priority: high');
+            } else if (content.includes('minor') || content.includes('typo')) {
+              labels.push('priority: low');
+            } else {
+              labels.push('priority: medium');
+            }
+            
+            // Classify by difficulty
+            if (content.includes('simple') || content.includes('easy') || title.includes('typo')) {
+              labels.push('good-first-issue');
+            }
+            
+            // Security-related
+            if (content.includes('security') || content.includes('vulnerability') || content.includes('cve')) {
+              labels.push('security');
+            }
+            
+            // Apply labels
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labels
+              });
+              
+              console.log(`Applied labels: ${labels.join(', ')}`);
+            }
+
+  community-summary:
+    name: 📋 Community Activity Summary
+    runs-on: ubuntu-latest
+    needs: [stale-management, contributor-recognition, community-health, issue-labeling]
+    if: always() && github.event_name == 'schedule'
+    permissions:
+      issues: write
+    
+    steps:
+      - name: 📊 Community Management Summary
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const jobs = [
+              { name: 'stale-management', result: '${{ needs.stale-management.result }}' },
+              { name: 'community-health', result: '${{ needs.community-health.result }}' }
+            ];
+            
+            const successful = jobs.filter(job => job.result === 'success').length;
+            const total = jobs.length;
+            
+            const summary = `## 👥 Community Management Summary
+            **Date**: ${new Date().toISOString().split('T')[0]}
+            **Status**: ${successful === total ? '✅ All tasks completed' : '⚠️ Some tasks need attention'}
+            
+            ### 🎯 Completed Tasks
+            - ${jobs.find(j => j.name === 'stale-management').result === 'success' ? '✅' : '❌'} Stale issue management
+            - ${jobs.find(j => j.name === 'community-health').result === 'success' ? '✅' : '❌'} Community health analysis
+            
+            ### 📈 Next Actions
+            - Monitor community health metrics
+            - Review stale issues for closure
+            - Engage with new contributors
+            
+            **Community automation is running smoothly! 🚀**
+            `;
+            
+            console.log(summary);

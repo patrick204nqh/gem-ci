@@ -1,0 +1,158 @@
+name: "02 - Core CI Pipeline"
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+env:
+  CI: true
+  COVERAGE: true
+
+jobs:
+  test:
+    name: "Test Ruby ${{ matrix.ruby }} on ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['3.1', '3.2', '3.3']
+        os: [ubuntu-latest, macos-latest]
+        
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        
+      - name: "💎 Setup Ruby ${{ matrix.ruby }}"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          
+      - name: "🔧 Cache Dependencies"
+        uses: actions/cache@v3
+        with:
+          path: |
+            vendor/bundle
+            ~/.gem
+          key: ${{ runner.os }}-ruby-${{ matrix.ruby }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-ruby-${{ matrix.ruby }}-gems-
+            
+      - name: "📦 Install Dependencies"
+        run: |
+          bundle config set --local deployment 'false'
+          bundle config set --local path 'vendor/bundle'
+          bundle install --jobs 4 --retry 3
+          
+      - name: "🧪 Run Tests"
+        run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/rspec.xml
+        
+      - name: "📊 Upload Test Results"
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: "RSpec Tests - Ruby ${{ matrix.ruby }} (${{ matrix.os }})"
+          path: tmp/rspec.xml
+          reporter: java-junit
+          
+      - name: "📈 Upload Coverage"
+        uses: codecov/codecov-action@v3
+        if: matrix.ruby == '3.3' && matrix.os == 'ubuntu-latest'
+        with:
+          file: ./coverage/coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+
+  lint:
+    name: "Code Quality & Linting"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: "💎 Setup Ruby"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          
+      - name: "🔍 Run RuboCop"
+        run: bundle exec rubocop --format github
+        
+      - name: "📝 Check Yard Documentation"
+        run: bundle exec yard stats --list-undoc
+        
+      - name: "🔒 Security Audit"
+        run: |
+          gem install bundler-audit
+          bundle audit --update
+
+  build:
+    name: "Build Gem"
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        
+      - name: "💎 Setup Ruby"
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          
+      - name: "🏗️ Build Gem"
+        run: |
+          gem build *.gemspec
+          ls -la *.gem
+          
+      - name: "📦 Upload Gem Artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: gem-ci-${{ github.sha }}
+          path: "*.gem"
+          retention-days: 30
+
+  summary:
+    name: "CI Summary"
+    runs-on: ubuntu-latest
+    needs: [test, lint, build]
+    if: always()
+    
+    steps:
+      - name: "📋 Create Summary"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const needs = ${{ toJSON(needs) }};
+            const testResult = needs.test.result;
+            const lintResult = needs.lint.result; 
+            const buildResult = needs.build.result;
+            
+            let summary = '## 🔍 CI Pipeline Summary\n\n';
+            
+            summary += `| Job | Status |\n`;
+            summary += `|-----|--------|\n`;
+            summary += `| Tests | ${testResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
+            summary += `| Linting | ${lintResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
+            summary += `| Build | ${buildResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n\n`;
+            
+            if (testResult === 'success' && lintResult === 'success' && buildResult === 'success') {
+              summary += '🎉 **All checks passed!** Ready for review and merge.\n';
+            } else {
+              summary += '⚠️ **Some checks failed.** Please review the logs and fix any issues.\n';
+            }
+            
+            console.log(summary);

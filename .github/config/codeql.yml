@@ -1,0 +1,40 @@
+name: gem-ci-codeql-config
+
+# CodeQL configuration for gem-ci Ruby analysis
+# Focuses on security and quality patterns relevant to gems
+
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+# Path filters for Ruby gem structure
+paths:
+  - lib/**
+  - bin/**
+  - spec/**
+
+# Ignore common non-source paths
+paths-ignore:
+  - docs/**
+  - coverage/**
+  - tmp/**
+  - vendor/**
+  - "**/*.md"
+  - "**/*.yml"
+  - "**/*.yaml"
+
+# Custom query suites for gem-ci
+query-filters:
+  - include:
+      kind: problem
+      severity: error
+  - include:
+      kind: problem  
+      severity: warning
+      tags:
+        - security
+        - maintainability
+        - correctness
+
+# Disable noisy queries that don't apply to gems
+disable-default-queries: false

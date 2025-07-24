@@ -1,0 +1,74 @@
+# 🧪 Validation Workflows
+# This folder contains validation workflows that test gem-ci setup and functionality
+# These are separate from production workflows (01-08) that get copied by the CLI tool
+
+name: "🔑 Validate GitHub App Setup"
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-github-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🔑 Generate GitHub App Token"
+        id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GEM_CI_APP_ID }}
+          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+      
+      - name: "✅ Validate Token Generation"
+        run: |
+          echo "✅ Token generated successfully!"
+          echo "📏 Token length: ${#APP_TOKEN} characters"
+          echo "⏰ Token expires in ~1 hour"
+        env:
+          APP_TOKEN: ${{ steps.app_token.outputs.token }}
+      
+      - name: "🌐 Test GitHub API Access"
+        run: |
+          echo "🧪 Testing API call with generated token..."
+          response=$(curl -s -w "%{http_code}" -H "Authorization: token $APP_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/user)
+          
+          http_code="${response: -3}"
+          if [ "$http_code" = "200" ]; then
+            echo "✅ API call successful (HTTP $http_code)"
+          else
+            echo "❌ API call failed (HTTP $http_code)"
+            exit 1
+          fi
+        env:
+          APP_TOKEN: ${{ steps.app_token.outputs.token }}
+      
+      - name: "🤖 Test Branded Bot Identity"
+        run: |
+          echo "🧪 Testing branded bot identity..."
+          bot_info=$(curl -s -H "Authorization: token $APP_TOKEN" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    https://api.github.com/user)
+          
+          bot_name=$(echo "$bot_info" | grep -o '"login":"[^"]*' | cut -d'"' -f4)
+          echo "🤖 Bot identity: $bot_name"
+          
+          if [[ "$bot_name" == *"[bot]"* ]]; then
+            echo "✅ Branded bot identity confirmed"
+          else
+            echo "⚠️ Warning: Expected [bot] suffix in name"
+          fi
+        env:
+          APP_TOKEN: ${{ steps.app_token.outputs.token }}
+      
+      - name: "✅ GitHub App Validation Complete"
+        run: |
+          echo "🎉 GitHub App validation completed successfully!"
+          echo "📋 Summary:"
+          echo "  ✅ Token generation: Working"
+          echo "  🌐 API access: Validated" 
+          echo "  🤖 Branded automation: Ready"
+          echo ""
+          echo "💡 Next steps:"
+          echo "  1. Run validate-slack-integration.yml to test notifications"
+          echo "  2. Convert production workflows to use app token"
+          echo "  3. Test template variable replacement" 

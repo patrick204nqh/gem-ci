@@ -1,5 +1,24 @@
 # frozen_string_literal: true
 
+# Enable coverage reporting in CI
+if ENV["CI"] || ENV["COVERAGE"]
+  require "simplecov"
+  require "simplecov-cobertura"
+
+  SimpleCov.start do
+    formatter SimpleCov::Formatter::MultiFormatter.new([
+                                                         SimpleCov::Formatter::HTMLFormatter,
+                                                         SimpleCov::Formatter::CoberturaFormatter
+                                                       ])
+
+    add_filter "/spec/"
+    add_filter "/vendor/"
+
+    minimum_coverage 90
+    refuse_coverage_drop
+  end
+end
+
 require "gem/ci"
 
 RSpec.configure do |config|

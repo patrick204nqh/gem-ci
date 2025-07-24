@@ -1,0 +1,297 @@
+name: 🏆 Code Quality & Documentation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  RUBY_VERSION: "3.2"
+
+jobs:
+  linting:
+    name: 🔍 Code Linting
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_RUBY: true
+          VALIDATE_YAML: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_JSON: true
+          RUBY_CONFIG_FILE: .rubocop.yml
+          LINTER_RULES_PATH: /
+          SUPPRESS_POSSUM: true
+          LOG_LEVEL: INFO
+
+  rubocop:
+    name: 💎 RuboCop Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: 🔍 Run RuboCop
+        run: |
+          bundle exec rubocop --format github --format json --out rubocop-results.json
+        continue-on-error: true
+
+      - name: 📊 RuboCop Report
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const results = JSON.parse(fs.readFileSync('rubocop-results.json', 'utf8'));
+              const { files, summary } = results;
+              
+              let reportBody = `## 💎 RuboCop Analysis Results\n\n`;
+              reportBody += `**Files Inspected**: ${summary.inspected_file_count}\n`;
+              reportBody += `**Offenses**: ${summary.offense_count}\n`;
+              reportBody += `**Target Version**: ${summary.target_ruby_version}\n\n`;
+              
+              if (summary.offense_count === 0) {
+                reportBody += `🎉 **Excellent!** No RuboCop offenses found.\n`;
+              } else {
+                reportBody += `### 📋 Issues Found\n\n`;
+                
+                const issueFiles = files.filter(file => file.offenses.length > 0);
+                issueFiles.slice(0, 5).forEach(file => {
+                  reportBody += `**📄 ${file.path}**\n`;
+                  file.offenses.slice(0, 3).forEach(offense => {
+                    reportBody += `- Line ${offense.location.start_line}: ${offense.message} (${offense.cop_name})\n`;
+                  });
+                  if (file.offenses.length > 3) {
+                    reportBody += `- ... and ${file.offenses.length - 3} more issues\n`;
+                  }
+                  reportBody += `\n`;
+                });
+                
+                if (issueFiles.length > 5) {
+                  reportBody += `... and ${issueFiles.length - 5} more files with issues\n\n`;
+                }
+              }
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: reportBody
+              });
+            } catch (error) {
+              console.log('Could not parse RuboCop results:', error.message);
+            }
+
+  documentation:
+    name: 📚 Documentation Generation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: 📚 Generate YARD documentation
+        run: |
+          bundle exec yard doc --output-dir docs/_site
+          
+          # Add custom styling and index
+          cat > docs/_site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>gem-ci Documentation</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 2rem; }
+              .header { text-align: center; margin-bottom: 2rem; }
+              .links { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+              .link { padding: 1rem 2rem; background: #f6f8fa; border-radius: 6px; text-decoration: none; color: #24292f; }
+              .link:hover { background: #e7eaf0; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h1>🏆 gem-ci Documentation</h1>
+              <p>Comprehensive OSS automation showcase with battle-tested GitHub Actions</p>
+            </div>
+            <div class="links">
+              <a href="Gem.html" class="link">📦 API Documentation</a>
+              <a href="../README.md" class="link">📖 README</a>
+              <a href="../COMPREHENSIVE_AUTOMATION_PLAN.md" class="link">🎯 Automation Plan</a>
+            </div>
+          </body>
+          </html>
+          EOF
+
+      - name: 📤 Upload documentation artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: docs/_site/
+          retention-days: 30
+
+      - name: 🚀 Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_site
+          destination_dir: .
+          keep_files: false
+          commit_message: '📚 Deploy documentation [skip ci]'
+
+  complexity-analysis:
+    name: 📊 Code Complexity Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 💎 Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: 📊 Analyze code complexity
+        run: |
+          # Install flog for complexity analysis
+          gem install flog
+          
+          # Run complexity analysis
+          echo "## 📊 Code Complexity Analysis" > complexity-report.md
+          echo "" >> complexity-report.md
+          
+          if find . -name "*.rb" -not -path "./vendor/*" | head -1 | read; then
+            echo "### 🎯 Complexity Scores (Lower is Better)" >> complexity-report.md
+            echo "" >> complexity-report.md
+            flog lib/ | head -20 >> complexity-report.md || echo "No complexity issues found!" >> complexity-report.md
+            echo "" >> complexity-report.md
+            echo "**Note**: Flog scores above 40 indicate high complexity that may need refactoring." >> complexity-report.md
+          else
+            echo "No Ruby files found for analysis." >> complexity-report.md
+          fi
+
+      - name: 📝 Comment complexity analysis
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const report = fs.readFileSync('complexity-report.md', 'utf8');
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: report
+              });
+            } catch (error) {
+              console.log('Could not read complexity report:', error.message);
+            }
+
+  quality-summary:
+    name: 📋 Quality Gate Summary
+    runs-on: ubuntu-latest
+    needs: [linting, rubocop, documentation, complexity-analysis]
+    if: always()
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    
+    steps:
+      - name: 📊 Quality Gate Results
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const jobs = [
+              { name: 'linting', result: '${{ needs.linting.result }}' },
+              { name: 'rubocop', result: '${{ needs.rubocop.result }}' },
+              { name: 'documentation', result: '${{ needs.documentation.result }}' },
+              { name: 'complexity-analysis', result: '${{ needs.complexity-analysis.result }}' }
+            ];
+            
+            const passed = jobs.filter(job => job.result === 'success').length;
+            const failed = jobs.filter(job => job.result === 'failure').length;
+            const total = jobs.length;
+            
+            const qualityGatePassed = failed === 0;
+            
+            const summary = `## 🏆 Quality Gate Results
+            
+            **Status**: ${qualityGatePassed ? '✅ PASSED' : '❌ FAILED'}
+            **Quality Score**: ${passed}/${total} checks passed
+            
+            ### 📊 Individual Results
+            ${jobs.map(job => {
+              const emoji = job.result === 'success' ? '✅' : 
+                           job.result === 'failure' ? '❌' : '⏸️';
+              return `- ${emoji} **${job.name}**: ${job.result}`;
+            }).join('\n')}
+            
+            ${qualityGatePassed ? 
+              '🎉 **Excellent work!** All quality checks passed.' : 
+              '⚠️ **Action needed**: Please address the failing quality checks above.'
+            }
+            `;
+            
+            if (context.eventName === 'pull_request') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: summary
+              });
+            }
+            
+            console.log(summary);
+            
+            // Set output for other workflows
+            core.setOutput('quality-gate-passed', qualityGatePassed);
+            core.setOutput('quality-score', `${passed}/${total}`);

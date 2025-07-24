@@ -1,0 +1,36 @@
+{
+  "name": "Release Tag Protection",
+  "target": "tag",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/tags/v*",
+        "refs/tags/release-*"
+      ],
+      "exclude": [
+        "refs/tags/v*-alpha*",
+        "refs/tags/v*-beta*",
+        "refs/tags/v*-rc*"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "update"
+    },
+    {
+      "type": "required_signatures"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 5,
+      "actor_type": "RepositoryRole",
+      "bypass_mode": "pull_request"
+    }
+  ]
+} 

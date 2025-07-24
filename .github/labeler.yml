@@ -1,0 +1,79 @@
+# 🏷️ Auto-labeling Configuration for gem-ci
+# Using proven patterns for reliable automation
+
+# Type labels based on file changes
+"type: ci/cd":
+  - ".github/workflows/**"
+  - ".github/actions/**"
+  - "Rakefile"
+  - "Gemfile*"
+
+"type: documentation":
+  - "README*"
+  - "docs/**"
+  - "**/*.md"
+  - "LICENSE*"
+  - "CHANGELOG*"
+
+"type: security":
+  - ".github/security.yml"
+  - "SECURITY.md"
+
+"type: testing":
+  - "spec/**"
+  - "test/**"
+  - ".rspec"
+  - "spec_helper.rb"
+
+"type: configuration":
+  - ".github/config/**"
+  - "*.yml"
+  - "*.yaml" 
+  - ".rubocop.yml"
+  - ".gitignore"
+
+"type: community":
+  - ".github/ISSUE_TEMPLATE/**"
+  - ".github/PULL_REQUEST_TEMPLATE/**"
+  - "CODE_OF_CONDUCT.md"
+  - "CONTRIBUTING.md"
+
+"type: release":
+  - "lib/**/version.rb"
+  - "CHANGELOG.md"
+  - "*.gemspec"
+
+# Area labels based on components
+"area: automation":
+  - ".github/workflows/**"
+  - ".github/actions/**"
+  - ".github/config/**"
+
+"area: core":
+  - "lib/**"
+  - "*.gemspec"
+  - "Gemfile*"
+
+"area: community":
+  - "CODE_OF_CONDUCT.md"
+  - "CONTRIBUTING.md"
+  - ".github/ISSUE_TEMPLATE/**"
+  - ".github/PULL_REQUEST_TEMPLATE/**"
+
+"area: ecosystem":
+  - "Gemfile.lock"
+  - "benchmark/**"
+  - "performance/**"
+
+# Size labels (automatically applied by GitHub)
+"size: small":
+  - any: ['**']
+    count: 1..10
+
+"size: medium":
+  - any: ['**']
+    count: 11..50
+
+"size: large":
+  - any: ['**']
+    count: 51..100
