@@ -2,9 +2,9 @@ name: "02 - Core CI Pipeline"
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ $default-branch ]
   pull_request:
-    branches: [ main ]
+    branches: [ $default-branch ]
 
 permissions:
   contents: read

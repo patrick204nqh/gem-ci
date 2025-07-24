@@ -2,9 +2,9 @@ name: 04 - Code Quality & Documentation
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ $default-branch ]
   pull_request:
-    branches: [ main ]
+    branches: [ $default-branch ]
 
 env:
   RUBY_VERSION: "3.2"
@@ -27,7 +27,7 @@ jobs:
       - name: 🔍 Lint Code Base
         uses: github/super-linter@v4
         env:
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_RUBY: true

@@ -25,8 +25,8 @@ This repository serves as the **perfect template** for Ruby gem automation. It i
 
 | **Category**        | **Task**                | **Workflow**                             | **Action Used**                           | **Configuration**           |
 | ------------------- | ----------------------- | ---------------------------------------- | ----------------------------------------- | --------------------------- |
-| **🔄 CI/CD**         | Multi-Ruby testing      | `02-ci.yml`                              | `ruby/setup-ruby@v1`                      | Ruby 3.1, 3.2, 3.3          |
-|                     | Cross-platform testing  | `02-ci.yml`                              | `actions/checkout@v4`                     | Ubuntu, macOS, Windows      |
+| **🔄 CI/CD**         | Multi-Ruby testing      | `02-ci.yml`                              | `ruby/setup-ruby@v1`                      | Ruby 3.2, 3.3, 3.4          |
+|                     | Cross-platform testing  | `02-ci.yml`                              | `actions/checkout@v4`                     | Ubuntu, macOS               |
 |                     | Dependency caching      | `02-ci.yml`                              | `actions/cache@v3`                        | Bundler cache               |
 |                     | Test execution          | `02-ci.yml`                              | Custom scripts                            | RSpec, Minitest             |
 |                     | Coverage reporting      | `04-quality.yml`                         | `simplecov` gem                           | 90% threshold               |

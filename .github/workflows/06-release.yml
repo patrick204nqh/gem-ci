@@ -2,7 +2,7 @@ name: 06 - Release Management
 
 on:
   push:
-    branches: [ main ]
+    branches: [ $default-branch ]
   workflow_dispatch:
     inputs:
       release_type:
