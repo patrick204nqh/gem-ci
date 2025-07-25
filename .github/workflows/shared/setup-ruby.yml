@@ -1,0 +1,45 @@
+name: Setup Ruby Environment
+description: 'Standardized Ruby setup with caching and bundler configuration'
+
+inputs:
+  ruby-version:
+    description: 'Ruby version to install'
+    required: false
+    default: '3.3'
+  bundler-cache:
+    description: 'Enable bundler cache'
+    required: false
+    default: 'true'
+  cache-key-suffix:
+    description: 'Additional suffix for cache key'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: 💎 Setup Ruby ${{ inputs.ruby-version }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: ${{ inputs.bundler-cache }}
+        cache-version: ${{ inputs.cache-key-suffix }}
+      
+    - name: 📦 Display Ruby and Bundler versions
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "Ruby version: $(ruby --version)"
+        echo "Bundler version: $(bundle --version)"
+        echo "Gem version: $(gem --version)"
+        
+    - name: 🔍 Verify bundle install
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -f Gemfile ]; then
+          echo "✅ Gemfile found, dependencies cached: ${{ inputs.bundler-cache }}"
+          bundle list --quiet
+        else
+          echo "ℹ️  No Gemfile found"
+        fi

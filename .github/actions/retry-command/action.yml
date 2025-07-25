@@ -1,0 +1,59 @@
+name: Retry Command
+description: 'Execute commands with retry logic and timeout handling'
+
+inputs:
+  command:
+    description: 'Command to execute with retry'
+    required: true
+  max-attempts:
+    description: 'Maximum number of retry attempts'
+    required: false
+    default: '3'
+  timeout-minutes:
+    description: 'Timeout in minutes per attempt'
+    required: false
+    default: '5'
+  retry-delay:
+    description: 'Delay between retries in seconds'
+    required: false
+    default: '10'
+
+runs:
+  using: composite
+  steps:
+    - name: 🔄 Execute command with retry
+      shell: bash
+      run: |
+        set -euo pipefail
+        
+        MAX_ATTEMPTS=${{ inputs.max-attempts }}
+        TIMEOUT_MINUTES=${{ inputs.timeout-minutes }}
+        RETRY_DELAY=${{ inputs.retry-delay }}
+        COMMAND="${{ inputs.command }}"
+        
+        echo "🔄 Executing command with retry logic:"
+        echo "📋 Command: $COMMAND"
+        echo "🔢 Max attempts: $MAX_ATTEMPTS"
+        echo "⏱️ Timeout per attempt: ${TIMEOUT_MINUTES}m"
+        echo "⏳ Retry delay: ${RETRY_DELAY}s"
+        echo ""
+        
+        for attempt in $(seq 1 $MAX_ATTEMPTS); do
+          echo "🚀 Attempt $attempt/$MAX_ATTEMPTS"
+          
+          if timeout "${TIMEOUT_MINUTES}m" bash -c "$COMMAND"; then
+            echo "✅ Command succeeded on attempt $attempt"
+            exit 0
+          else
+            exit_code=$?
+            echo "❌ Command failed on attempt $attempt (exit code: $exit_code)"
+            
+            if [ $attempt -lt $MAX_ATTEMPTS ]; then
+              echo "⏳ Waiting ${RETRY_DELAY}s before retry..."
+              sleep $RETRY_DELAY
+            else
+              echo "💥 All $MAX_ATTEMPTS attempts failed"
+              exit $exit_code
+            fi
+          fi
+        done

@@ -1,4 +1,4 @@
-name: 04 - Code Quality and Documentation
+name: 04 - Quality
 
 on:
   push:
@@ -7,7 +7,11 @@ on:
     branches: [main, master]
 
 env:
-  RUBY_VERSION: "3.2"
+  RUBY_VERSION: "3.3"
+  NODE_VERSION: "20"
+  CACHE_VERSION: "v1"
+  DEFAULT_TIMEOUT: "300"
+  API_RETRY_COUNT: "3"
 
 jobs:
   linting:
@@ -24,11 +28,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 🔑 Generate GitHub App Token
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.GEM_CI_APP_ID }}
+          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+
       - name: 🔍 Lint Code Base
         uses: github/super-linter@v4
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_RUBY: true
           VALIDATE_YAML: true
@@ -63,7 +74,7 @@ jobs:
         continue-on-error: true
 
       - name: 📊 RuboCop Report
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         with:
           script: |
@@ -122,6 +133,13 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
+      - name: 🔑 Generate GitHub App Token
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.GEM_CI_APP_ID }}
+          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -163,7 +181,7 @@ jobs:
           EOF
 
       - name: 📤 Upload documentation artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: docs/_site/
@@ -173,7 +191,7 @@ jobs:
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.app_token.outputs.token }}
           publish_dir: ./docs/_site
           destination_dir: .
           keep_files: false
@@ -216,7 +234,7 @@ jobs:
           fi
 
       - name: 📝 Comment complexity analysis
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         with:
           script: |
@@ -247,7 +265,7 @@ jobs:
     
     steps:
       - name: 📊 Quality Gate Results
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const jobs = [
