@@ -1,10 +1,10 @@
-name: Security Scanning
+name: 03 - Security Scanning
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [main, master]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [main, master]
   schedule:
     # Run security scans daily at 2 AM UTC
     - cron: '0 2 * * *'
@@ -99,7 +99,7 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: main
+          base: ${{ github.event.repository.default_branch }}
           head: HEAD
           extra_args: --debug --only-verified
 

@@ -1,10 +1,10 @@
-name: Advanced Monitoring and Metrics
+name: 08 - Advanced Monitoring and Metrics
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [main, master]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [main, master]
   schedule:
     # Run comprehensive monitoring daily at 4 AM UTC
     - cron: '0 4 * * *'

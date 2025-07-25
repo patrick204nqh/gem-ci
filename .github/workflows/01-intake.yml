@@ -1,4 +1,4 @@
-name: "Issue and PR Intake"
+name: 01 - Issue and PR Intake
 
 on:
   issues:
