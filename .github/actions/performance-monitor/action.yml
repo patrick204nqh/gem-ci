@@ -1,0 +1,83 @@
+name: Performance Monitor
+description: 'Track and report workflow performance metrics'
+
+inputs:
+  step-name:
+    description: 'Name of the step being monitored'
+    required: true
+  command:
+    description: 'Command to execute and monitor'
+    required: true
+  github-token:
+    description: 'GitHub token for API calls'
+    required: false
+
+outputs:
+  duration:
+    description: 'Execution duration in seconds'
+    value: ${{ steps.monitor.outputs.duration }}
+  status:
+    description: 'Execution status (success/failure)'
+    value: ${{ steps.monitor.outputs.status }}
+
+runs:
+  using: composite
+  steps:
+    - name: 📊 Performance Monitor - ${{ inputs.step-name }}
+      id: monitor
+      shell: bash
+      run: |
+        set -euo pipefail
+        
+        STEP_NAME="${{ inputs.step-name }}"
+        COMMAND="${{ inputs.command }}"
+        
+        echo "📊 Starting performance monitoring for: $STEP_NAME"
+        echo "⏰ Start time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+        
+        # Record start time
+        START_TIME=$(date +%s)
+        echo "WORKFLOW_START_TIME_${STEP_NAME//[^a-zA-Z0-9]/_}=$START_TIME" >> $GITHUB_ENV
+        
+        # Execute command and capture exit code
+        if bash -c "$COMMAND"; then
+          STATUS="success"
+          EXIT_CODE=0
+          echo "✅ Command completed successfully"
+        else
+          STATUS="failure"
+          EXIT_CODE=$?
+          echo "❌ Command failed with exit code: $EXIT_CODE"
+        fi
+        
+        # Calculate duration
+        END_TIME=$(date +%s)
+        DURATION=$((END_TIME - START_TIME))
+        
+        echo "⏱️ End time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+        echo "⏱️ Duration: ${DURATION}s"
+        
+        # Output results
+        echo "duration=$DURATION" >> $GITHUB_OUTPUT
+        echo "status=$STATUS" >> $GITHUB_OUTPUT
+        
+        # Create performance summary
+        echo "## 📊 Performance Report: $STEP_NAME" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Status | $STATUS |" >> $GITHUB_STEP_SUMMARY
+        echo "| Duration | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
+        echo "| Start Time | $(date -u -d @$START_TIME +"%Y-%m-%d %H:%M:%S UTC") |" >> $GITHUB_STEP_SUMMARY
+        echo "| End Time | $(date -u -d @$END_TIME +"%Y-%m-%d %H:%M:%S UTC") |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Performance thresholds
+        if [ $DURATION -gt 300 ]; then
+          echo "⚠️ **Performance Warning**: Step took longer than 5 minutes" >> $GITHUB_STEP_SUMMARY
+        elif [ $DURATION -gt 600 ]; then
+          echo "🚨 **Performance Alert**: Step took longer than 10 minutes" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Exit with original command's exit code
+        exit $EXIT_CODE

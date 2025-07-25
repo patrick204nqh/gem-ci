@@ -1,0 +1,39 @@
+name: Generate GitHub App Token
+description: 'Generate GitHub App authentication token for personal branding'
+
+inputs:
+  app-id:
+    description: 'GitHub App ID'
+    required: true
+  private-key:
+    description: 'GitHub App private key'
+    required: true
+
+outputs:
+  token:
+    description: 'Generated GitHub App token'
+    value: ${{ steps.app_token.outputs.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: 🔑 Generate GitHub App Token
+      id: app_token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ inputs.app-id }}
+        private-key: ${{ inputs.private-key }}
+    
+    - name: ✅ Validate token generation
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -n "${{ steps.app_token.outputs.token }}" ]; then
+          echo "✅ GitHub App token generated successfully"
+          echo "📏 Token length: ${#APP_TOKEN} characters"
+        else
+          echo "❌ Failed to generate GitHub App token"
+          exit 1
+        fi
+      env:
+        APP_TOKEN: ${{ steps.app_token.outputs.token }}

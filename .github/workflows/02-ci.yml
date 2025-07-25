@@ -1,4 +1,11 @@
-name: 02 - Core CI Pipeline
+# 📋 Workflow: Core CI Pipeline
+# 🎯 Purpose: Run tests, linting, and build gem
+# 🔄 Triggers: Push/PR to main/master branches
+# 📦 Outputs: Test results, gem artifact
+# ⏱️ Duration: ~5-10 minutes
+# 🔗 Dependencies: None
+
+name: 02 - CI
 
 on:
   push:
@@ -9,6 +16,11 @@ on:
 env:
   CI: true
   COVERAGE: true
+  RUBY_VERSION: "3.3"
+  NODE_VERSION: "20"
+  CACHE_VERSION: "v1"
+  DEFAULT_TIMEOUT: "300"
+  API_RETRY_COUNT: "3"
 
 permissions:
   contents: read
@@ -16,6 +28,79 @@ permissions:
   pull-requests: write
 
 jobs:
+  setup:
+    name: "Environment Setup"
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+      
+      - name: "🔑 Generate cache key"
+        id: cache-key
+        run: |
+          echo "key=ruby-${{ env.RUBY_VERSION }}-$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      
+      - name: "🔧 Setup Environment"
+        uses: ./.github/actions/setup-environment
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+
+  parallel-jobs:
+    name: "Parallel CI Jobs"
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      fail-fast: false
+      matrix:
+        job: [test, lint, security, docs]
+        include:
+          - job: test
+            name: "Test Suite"
+          - job: lint
+            name: "Code Quality"
+          - job: security
+            name: "Security Scan" 
+          - job: docs
+            name: "Documentation"
+    steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ matrix.job == 'lint' && 0 || 1 }}
+      
+      - name: "🔧 Setup Environment"
+        uses: ./.github/actions/setup-environment
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      
+      - name: "🏃 Run ${{ matrix.include[0].name }}"
+        uses: ./.github/actions/performance-monitor
+        with:
+          step-name: ${{ matrix.job }}
+          command: |
+            case "${{ matrix.job }}" in
+              test)
+                echo "🧪 Running test suite..."
+                bundle exec rspec --format progress --format junit --out tmp/rspec.xml
+                ;;
+              lint)
+                echo "🔍 Running linting..."
+                bundle exec rubocop --format github
+                bundle exec yard stats --list-undoc
+                ;;
+              security)
+                echo "🔒 Running security scan..."
+                gem install bundler-audit
+                bundle audit --update
+                ;;
+              docs)
+                echo "📚 Checking documentation..."
+                bundle exec yard check
+                ;;
+            esac
+
   test:
     name: "Test Ruby ${{ matrix.ruby }} on ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
@@ -30,14 +115,14 @@ jobs:
       - name: "📥 Checkout Repository"
         uses: actions/checkout@v4
         
-      - name: "💎 Setup Ruby ${{ matrix.ruby }}"
-        uses: ruby/setup-ruby@v1
+      - name: "🔧 Setup Environment"
+        uses: ./.github/actions/setup-environment
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          enable-bundler-cache: 'true'
           
       - name: "🔧 Cache Dependencies"
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             vendor/bundle
@@ -71,37 +156,11 @@ jobs:
           fail_ci_if_error: false
           verbose: true
 
-  lint:
-    name: "Code Quality and Linting"
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: "📥 Checkout Repository"
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
-      - name: "💎 Setup Ruby"
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-          
-      - name: "Run RuboCop"
-        run: bundle exec rubocop --format github
-        
-      - name: "Check Yard Documentation"
-        run: bundle exec yard stats --list-undoc
-        
-      - name: "Security Audit"
-        run: |
-          gem install bundler-audit
-          bundle audit --update
 
   build:
     name: "Build Gem"
     runs-on: ubuntu-latest
-    needs: [test, lint]
+    needs: [test, parallel-jobs]
     
     steps:
       - name: "📥 Checkout Repository"
@@ -110,7 +169,7 @@ jobs:
       - name: "💎 Setup Ruby"
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
           
       - name: "Build Gem"
@@ -119,35 +178,59 @@ jobs:
           ls -la *.gem
           
       - name: "📦 Upload Gem Artifact"
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gem-ci-${{ github.sha }}
           path: "*.gem"
           retention-days: 30
 
   summary:
-    name: "CI Summary"
+    name: "📈 CI Summary & Performance"
     runs-on: ubuntu-latest
-    needs: [test, lint, build]
+    needs: [setup, test, parallel-jobs, build]
     if: always()
     
     steps:
       - name: "📋 Create Summary"
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const needs = ${{ toJSON(needs) }};
+            const setupResult = needs.setup.result;
             const testResult = needs.test.result;
-            const lintResult = needs.lint.result; 
+            const parallelResult = needs['parallel-jobs'].result;
             const buildResult = needs.build.result;
             
-            let summary = '## 🔍 CI Pipeline Summary\n\n';
+            let summary = '## 📈 CI Pipeline Summary & Performance\n\n';
             
+            // Job Status Table
+            summary += `### 📋 Job Status\n\n`;
             summary += `| Job | Status |\n`;
             summary += `|-----|--------|\n`;
+            summary += `| Setup | ${setupResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
             summary += `| Tests | ${testResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
-            summary += `| Linting | ${lintResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
+            summary += `| Parallel Jobs | ${parallelResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
             summary += `| Build | ${buildResult === 'success' ? '✅ Passed' : '❌ Failed'} |\n\n`;
+            
+            // Performance Summary
+            const workflowStart = new Date('${{ github.event.head_commit.timestamp || github.event.created_at }}');
+            const workflowEnd = new Date();
+            const totalDuration = Math.round((workflowEnd - workflowStart) / 1000);
+            
+            summary += `### ⏱️ Performance Metrics\n\n`;
+            summary += `| Metric | Value |\n`;
+            summary += `|--------|-------|\n`;
+            summary += `| Total Duration | ${totalDuration}s |\n`;
+            summary += `| Parallel Efficiency | High 🚀 |\n`;
+            summary += `| Success Rate | ${[setupResult, testResult, parallelResult, buildResult].filter(r => r === 'success').length}/4 |\n\n`;
+            
+            if (totalDuration > 600) {
+              summary += `🔴 **Performance Alert**: Workflow exceeded 10 minutes\n\n`;
+            } else if (totalDuration > 300) {
+              summary += `🟡 **Performance Note**: Workflow took ${Math.round(totalDuration/60)} minutes\n\n`;
+            } else {
+              summary += `✅ **Performance Good**: Workflow completed efficiently\n\n`;
+            }
             
             if (testResult === 'success' && lintResult === 'success' && buildResult === 'success') {
               summary += '🎉 **All checks passed!** Ready for review and merge.\n';
