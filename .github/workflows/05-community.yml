@@ -30,13 +30,13 @@ jobs:
     steps:
       - name: 🔑 Generate GitHub App Token
         id: app_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GEM_CI_APP_ID }}
           private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
 
       - name: 🔍 Manage stale issues and PRs
-        uses: actions/stale@v8
+        uses: actions/stale@v9
         with:
           repo-token: ${{ steps.app_token.outputs.token }}
           days-before-stale: ${{ env.DAYS_BEFORE_STALE }}
