@@ -66,7 +66,7 @@ jobs:
           token: ${{ steps.app_token.outputs.token }}
           release-type: ruby
           package-name: gem-ci
-          version-file: lib/gem/ci/version.rb
+          version-file: lib/gem_ci/version.rb
           changelog-sections: |
             [
               {"type":"feat","section":"🚀 Features","hidden":false},

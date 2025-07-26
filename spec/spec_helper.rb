@@ -19,7 +19,7 @@ if ENV["CI"] || ENV["COVERAGE"]
   end
 end
 
-require "gem/ci"
+require "gem_ci"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
