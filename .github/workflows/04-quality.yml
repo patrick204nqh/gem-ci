@@ -43,7 +43,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 🔍 Lint Code Base
-        uses: github/super-linter@v5
+        uses: github/super-linter@v6
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -56,6 +56,7 @@ jobs:
           LINTER_RULES_PATH: /
           SUPPRESS_POSSUM: true
           LOG_LEVEL: INFO
+          FILTER_REGEX_EXCLUDE: .*coverage/.*
 
   rubocop:
     name: 💎 RuboCop Analysis
