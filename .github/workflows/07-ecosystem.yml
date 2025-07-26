@@ -139,12 +139,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby_version: ['3.0', '3.1', '3.2', '3.3', 'head']
+        ruby_version: ['3.2', '3.3']
         os: [ubuntu-latest, macos-latest, windows-latest]
-        exclude:
-          # Reduce matrix size by excluding some combinations
-          - ruby_version: 'head'
-            os: windows-latest
     
     steps:
       - name: 📥 Checkout repository

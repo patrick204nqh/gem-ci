@@ -49,10 +49,21 @@ jobs:
       pr_created: ${{ steps.release.outputs.pr_created }}
     
     steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔑 Generate GitHub App Token
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: 🎯 Release Please
         uses: google-github-actions/release-please-action@v3
         id: release
         with:
+          token: ${{ steps.app_token.outputs.token }}
           release-type: ruby
           package-name: gem-ci
           version-file: lib/gem/ci/version.rb
