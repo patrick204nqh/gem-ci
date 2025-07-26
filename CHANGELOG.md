@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.2.0...gem-ci/v0.2.1) (2025-07-26)
+
+
+### 🐛 Bug Fixes
+
+* Add missing checkout step in stale management job ([679a603](https://github.com/patrick204nqh/gem-ci/commit/679a60377930993c42745f6cc0c0b7f24781961c))
+* Update gemspec metadata to include homepage URI and correct documentation URI ([02dfb2b](https://github.com/patrick204nqh/gem-ci/commit/02dfb2ba4c5c60a56123a4e00bbd56beef5e1b1e))
+
 ## [0.2.0](https://github.com/patrick204nqh/gem-ci/compare/gem-ci-v0.1.1...gem-ci/v0.2.0) (2025-07-26)
 
 

@@ -1,0 +1,39 @@
+# Markdownlint configuration for gem-ci
+# Relaxed rules for better developer experience
+
+# Line length
+MD013:
+  line_length: 120
+  code_blocks: false
+  tables: false
+  headings: false
+
+# Allow emphasis as headings (useful for styled documentation)
+MD036: false
+
+# Relax heading spacing requirements
+MD022: false
+
+# Allow trailing punctuation in headings
+MD026: false
+
+# Allow duplicate headings (common in multi-section docs)
+MD024: false
+
+# Allow HTML in markdown (useful for badges and formatting)
+MD033: false
+
+# Allow bare URLs (auto-linking is fine)
+MD034: false
+
+# Relax list spacing requirements
+MD032: false
+
+# Allow files without trailing newlines
+MD047: false
+
+# Relax fenced code block spacing
+MD031: false
+
+# Allow trailing spaces (sometimes needed for line breaks)
+MD009: false
