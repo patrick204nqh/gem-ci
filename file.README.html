@@ -390,12 +390,12 @@
 </thead>
 <tbody>
 <tr>
-<td><code>GEM_CI_APP_ID</code></td>
+<td><code>APP_ID</code></td>
 <td>GitHub App ID for branded automation</td>
 <td>✅ Yes</td>
 </tr>
 <tr>
-<td><code>GEM_CI_PRIVATE_KEY</code></td>
+<td><code>PRIVATE_KEY</code></td>
 <td>GitHub App private key</td>
 <td>✅ Yes</td>
 </tr>
@@ -461,15 +461,76 @@
 </tbody>
 </table>
 
+<h2 id="label-F0-9F-94-84+Ruby+Gem+Repository+Lifecycle">🔄 Ruby Gem Repository Lifecycle</h2>
+
+<p>This template provides a complete automation solution that follows the natural lifecycle of a Ruby gem repository:</p>
+
+<h3 id="label-F0-9F-9A-80+Phase+1-3A+Repository+Setup+-28One-time-29">🚀 <strong>Phase 1: Repository Setup</strong> (One-time)</h3>
+<ul><li>
+<p><strong>🏷️ Label Management</strong>: Sync professional labels with <code>01-intake.yml</code></p>
+</li><li>
+<p><strong>🔐 Secret Configuration</strong>: Setup GitHub App authentication and integrations</p>
+</li><li>
+<p><strong>🛡️ Branch Protection</strong>: Configure repository rulesets and security policies</p>
+</li><li>
+<p><strong>⚙️ Initial Configuration</strong>: Dependabot, CodeQL, and workflow settings</p>
+</li></ul>
+
+<h3 id="label-F0-9F-92-BB+Phase+2-3A+Development+Cycle+-28Daily-29">💻 <strong>Phase 2: Development Cycle</strong> (Daily)</h3>
+<ul><li>
+<p><strong>🧪 Continuous Testing</strong>: Multi-Ruby version testing with <code>02-ci.yml</code></p>
+</li><li>
+<p><strong>🔒 Security Scanning</strong>: Vulnerability detection with <code>03-security.yml</code></p>
+</li><li>
+<p><strong>📊 Code Quality</strong>: RuboCop linting and documentation with <code>04-quality.yml</code></p>
+</li><li>
+<p><strong>🏷️ Auto-labeling</strong>: Smart PR/issue labeling with <code>01-intake.yml</code></p>
+</li><li>
+<p><strong>👋 Contributor Welcome</strong>: First-time contributor guidance with <code>01-intake.yml</code></p>
+</li></ul>
+
+<h3 id="label-F0-9F-93-A6+Phase+3-3A+Dependency+Management+-28Automated-29">📦 <strong>Phase 3: Dependency Management</strong> (Automated)</h3>
+<ul><li>
+<p><strong>🤖 Dependabot Updates</strong>: Weekly dependency update PRs</p>
+</li><li>
+<p><strong>🧪 Update Testing</strong>: Automated testing of dependency changes</p>
+</li><li>
+<p><strong>✅ Safe Auto-merge</strong>: Automatic merging of low-risk updates</p>
+</li></ul>
+
+<h3 id="label-F0-9F-9A-80+Phase+4-3A+Release+Process+-28On-demand-29">🚀 <strong>Phase 4: Release Process</strong> (On-demand)</h3>
+<ul><li>
+<p><strong>🏗️ Gem Building</strong>: Automated gem packaging with <code>06-release.yml</code></p>
+</li><li>
+<p><strong>💎 RubyGems Publishing</strong>: Direct publishing to RubyGems registry</p>
+</li><li>
+<p><strong>📝 Changelog Generation</strong>: Automatic changelog and release notes</p>
+</li><li>
+<p><strong>📢 Release Notifications</strong>: Slack and GitHub release announcements</p>
+</li></ul>
+
+<h3 id="label-F0-9F-94-84+Phase+5-3A+Ongoing+Maintenance+-28Background-29">🔄 <strong>Phase 5: Ongoing Maintenance</strong> (Background)</h3>
+<ul><li>
+<p><strong>🧹 Stale Management</strong>: Automated stale issue cleanup with <code>05-community.yml</code></p>
+</li><li>
+<p><strong>🌐 Ecosystem Monitoring</strong>: Compatibility checks with <code>07-ecosystem.yml</code></p>
+</li><li>
+<p><strong>📈 Health Monitoring</strong>: Performance tracking with <code>08-monitoring.yml</code></p>
+</li><li>
+<p><strong>👥 Community Engagement</strong>: Contributor recognition and community health</p>
+</li></ul>
+
 <h2 id="label-F0-9F-93-9A+Documentation">📚 Documentation</h2>
 <ul><li>
-<p><strong>Setup Guide[docs/SECRETS_SETUP_GUIDE.md]</strong> - Complete secrets configuration</p>
+<p><strong>Lifecycle Diagram[docs/diagrams/ci-workflow-overview.md]</strong> - Visual repository lifecycle and workflow mapping</p>
 </li><li>
-<p><strong>App Setup[docs/GITHUB_APP_SETUP_GUIDE.md]</strong> - Branded automation setup</p>
+<p><strong>Secrets Setup Guide[docs/SECRETS_SETUP_GUIDE.md]</strong> - Complete secrets configuration</p>
 </li><li>
-<p><strong>Color Guide[docs/LABELS_COLOR_GUIDE.md]</strong> - Label design and accessibility</p>
+<p><strong>Manual Testing Guide[docs/MANUAL_WORKFLOW_TESTING.md]</strong> - How to test and trigger workflows manually</p>
 </li><li>
-<p><strong>Workflows[docs/workflows/tests/README.md]</strong> - Testing your setup</p>
+<p><strong>Labels Color Guide[docs/LABELS_COLOR_GUIDE.md]</strong> - Label design and accessibility</p>
+</li><li>
+<p><strong>Validation Workflows[.github/workflows/tests/README.md]</strong> - Testing your setup</p>
 </li></ul>
 
 <h2 id="label-F0-9F-8E-AF+Key+Features">🎯 Key Features</h2>
@@ -564,7 +625,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Fri Jul 25 15:35:37 2025 by
+  Generated on Sat Jul 26 17:25:08 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
