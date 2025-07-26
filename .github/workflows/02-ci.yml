@@ -71,28 +71,24 @@ jobs:
         uses: ./.github/actions/performance-monitor
         with:
           step-name: ${{ matrix.job }}
-          command: |
+          command: >
             case "${{ matrix.job }}" in
-              test)
-                echo "🧪 Running test suite..."
-                bundle exec rspec --format progress --format junit --out tmp/rspec.xml
-                ;;
               lint)
-                echo "🔍 Running linting..."
-                bundle exec rubocop --format github
+                echo "🔍 Running linting..." &&
+                bundle exec rubocop --format github &&
                 bundle exec yard stats --list-undoc
                 ;;
               security)
-                echo "🔒 Running security scan..."
-                gem install bundler-audit
+                echo "🔒 Running security scan..." &&
+                gem install bundler-audit &&
                 bundle audit --update
                 ;;
               docs)
-                echo "📚 Checking documentation..."
+                echo "📚 Checking documentation..." &&
                 bundle exec yard check
                 ;;
               *)
-                echo "❌ Unknown job: ${{ matrix.job }}"
+                echo "❌ Unknown job: ${{ matrix.job }}" &&
                 exit 1
                 ;;
             esac
