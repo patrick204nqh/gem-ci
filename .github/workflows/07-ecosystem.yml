@@ -1,3 +1,10 @@
+# 📋 Workflow: Ecosystem Health & Integration
+# 🎯 Purpose: External integrations, ecosystem compatibility checks
+# 🔄 Triggers: Push to main/master, releases, weekly on Sundays at 3 AM UTC
+# 📦 Outputs: Integration reports, compatibility matrix
+# ⏱️ Duration: ~5-12 minutes
+# 🔗 Dependencies: External API keys
+
 name: 07 - Ecosystem
 
 on:
@@ -382,10 +389,5 @@ jobs:
             
             console.log(summary);
             
-            // Store ecosystem health metrics
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'ECOSYSTEM_HEALTH_SCORE',
-              value: Math.round((successful / total) * 100).toString()
-            });
+            // Output ecosystem health metrics for monitoring
+            console.log(`📊 ECOSYSTEM_HEALTH_SCORE: ${Math.round((successful / total) * 100)}%`);

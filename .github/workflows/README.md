@@ -55,8 +55,8 @@ This directory contains the refactored GitHub Actions workflows for the gem-ci p
   id: app_token
   uses: ./.github/actions/github-app-token
   with:
-    app-id: ${{ secrets.GEM_CI_APP_ID }}
-    private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+    app-id: ${{ secrets.APP_ID }}
+    private-key: ${{ secrets.PRIVATE_KEY }}
 ```
 
 ## 📊 Performance Metrics
@@ -85,8 +85,8 @@ All workflows use **GitHub App authentication** for:
 - ✅ Better security posture
 
 **Required Secrets:**
-- `GEM_CI_APP_ID`: GitHub App ID
-- `GEM_CI_PRIVATE_KEY`: GitHub App private key
+- `APP_ID`: GitHub App ID
+- `PRIVATE_KEY`: GitHub App private key
 
 ## 🚀 Next Steps
 

@@ -38,10 +38,10 @@ jobs:
         
       - name: "Generate GitHub App Token"
         id: app_token
-        uses: actions/create-github-app-token@v1
+        uses: ./.github/actions/github-app-token
         with:
-          app-id: ${{ secrets.GEM_CI_APP_ID }}
-          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
         
       - name: "Sync Labels"
         uses: crazy-max/ghaction-github-labeler@v5
@@ -62,10 +62,10 @@ jobs:
 
       - name: "🔑 Generate GitHub App Token"
         id: app_token
-        uses: actions/create-github-app-token@v1
+        uses: ./.github/actions/github-app-token
         with:
-          app-id: ${{ secrets.GEM_CI_APP_ID }}
-          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
         
       - name: "Apply Labels Based on Files"
         uses: actions/labeler@v5
@@ -79,12 +79,15 @@ jobs:
     if: github.event_name == 'issues' || github.event_name == 'pull_request'
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+
       - name: "🔑 Generate GitHub App Token"
         id: app_token
-        uses: actions/create-github-app-token@v1
+        uses: ./.github/actions/github-app-token
         with:
-          app-id: ${{ secrets.GEM_CI_APP_ID }}
-          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: "Welcome First-Time Contributors"
         uses: actions/first-interaction@v1
@@ -119,12 +122,15 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+
       - name: "🔑 Generate GitHub App Token"
         id: app_token
-        uses: actions/create-github-app-token@v1
+        uses: ./.github/actions/github-app-token
         with:
-          app-id: ${{ secrets.GEM_CI_APP_ID }}
-          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: "Add Size Label"
         uses: codelytv/pr-size-labeler@v1
@@ -144,12 +150,15 @@ jobs:
     if: github.event.action == 'opened' && github.event_name == 'issues'
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+
       - name: "🔑 Generate GitHub App Token"
         id: app_token
-        uses: actions/create-github-app-token@v1
+        uses: ./.github/actions/github-app-token
         with:
-          app-id: ${{ secrets.GEM_CI_APP_ID }}
-          private-key: ${{ secrets.GEM_CI_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: "Add Triage Label"
         uses: actions/github-script@v7

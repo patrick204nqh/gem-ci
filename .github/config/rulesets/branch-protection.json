@@ -31,11 +31,19 @@
             "integration_id": null
           },
           {
-            "context": "Code Quality and Linting",
+            "context": "🔍 Code Linting",
             "integration_id": null
           },
           {
-            "context": "CodeQL Analysis",
+            "context": "💎 RuboCop Analysis",
+            "integration_id": null
+          },
+          {
+            "context": "🔍 CodeQL Analysis",
+            "integration_id": null
+          },
+          {
+            "context": "🛡️ Vulnerability Scanning",
             "integration_id": null
           }
         ],

@@ -69,8 +69,8 @@ This repository serves as the **perfect template** for Ruby gem automation. It i
 ### **Secrets** (Required)
 | Secret | Purpose | Required |
 |--------|---------|----------|
-| `GEM_CI_APP_ID` | GitHub App ID for branded automation | ✅ Yes |
-| `GEM_CI_PRIVATE_KEY` | GitHub App private key | ✅ Yes |
+| `APP_ID` | GitHub App ID for branded automation | ✅ Yes |
+| `PRIVATE_KEY` | GitHub App private key | ✅ Yes |
 | `SLACK_BOT_TOKEN` | Slack bot token for notifications | ❌ Optional |
 | `SLACK_CHANNEL_ID` | Slack channel ID | ❌ Optional |
 | `RUBYGEMS_API_KEY` | RubyGems publishing key | ❌ Optional |
@@ -85,12 +85,47 @@ This repository serves as the **perfect template** for Ruby gem automation. It i
 | `.github/config/codeql.yml` | CodeQL analysis configuration | ✅ Yes |
 | `.github/config/rulesets/*.json` | Repository protection rules | ❌ Optional |
 
+## 🔄 Ruby Gem Repository Lifecycle
+
+This template provides a complete automation solution that follows the natural lifecycle of a Ruby gem repository:
+
+### 🚀 **Phase 1: Repository Setup** (One-time)
+- **🏷️ Label Management**: Sync professional labels with `01-intake.yml`
+- **🔐 Secret Configuration**: Setup GitHub App authentication and integrations
+- **🛡️ Branch Protection**: Configure repository rulesets and security policies
+- **⚙️ Initial Configuration**: Dependabot, CodeQL, and workflow settings
+
+### 💻 **Phase 2: Development Cycle** (Daily)
+- **🧪 Continuous Testing**: Multi-Ruby version testing with `02-ci.yml`
+- **🔒 Security Scanning**: Vulnerability detection with `03-security.yml`  
+- **📊 Code Quality**: RuboCop linting and documentation with `04-quality.yml`
+- **🏷️ Auto-labeling**: Smart PR/issue labeling with `01-intake.yml`
+- **👋 Contributor Welcome**: First-time contributor guidance with `01-intake.yml`
+
+### 📦 **Phase 3: Dependency Management** (Automated)
+- **🤖 Dependabot Updates**: Weekly dependency update PRs
+- **🧪 Update Testing**: Automated testing of dependency changes
+- **✅ Safe Auto-merge**: Automatic merging of low-risk updates
+
+### 🚀 **Phase 4: Release Process** (On-demand)
+- **🏗️ Gem Building**: Automated gem packaging with `06-release.yml`
+- **💎 RubyGems Publishing**: Direct publishing to RubyGems registry  
+- **📝 Changelog Generation**: Automatic changelog and release notes
+- **📢 Release Notifications**: Slack and GitHub release announcements
+
+### 🔄 **Phase 5: Ongoing Maintenance** (Background)
+- **🧹 Stale Management**: Automated stale issue cleanup with `05-community.yml`
+- **🌐 Ecosystem Monitoring**: Compatibility checks with `07-ecosystem.yml`
+- **📈 Health Monitoring**: Performance tracking with `08-monitoring.yml`
+- **👥 Community Engagement**: Contributor recognition and community health
+
 ## 📚 Documentation
 
-- **[Secrets Setup Guide](docs/SECRETS_SETUP_GUIDE.md)** - Complete secrets configuration
-- **[GitHub App Setup](docs/GITHUB_APP_SETUP_GUIDE.md)** - Branded automation setup
-- **[Labels Color Guide](docs/LABELS_COLOR_GUIDE.md)** - Label design and accessibility
-- **[Validation Workflows](docs/workflows/tests/README.md)** - Testing your setup
+- **[🔄 Lifecycle Diagram](docs/diagrams/ci-workflow-overview.md)** - Visual repository lifecycle and workflow mapping
+- **[🔐 Secrets Setup Guide](docs/SECRETS_SETUP_GUIDE.md)** - Complete secrets configuration
+- **[🧪 Manual Testing Guide](docs/MANUAL_WORKFLOW_TESTING.md)** - How to test and trigger workflows manually
+- **[🏷️ Labels Color Guide](docs/LABELS_COLOR_GUIDE.md)** - Label design and accessibility
+- **[✅ Validation Workflows](.github/workflows/tests/README.md)** - Testing your setup
 
 ## 🎯 Key Features
 
