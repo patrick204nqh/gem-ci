@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.2](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.2.1...gem-ci/v0.2.2) (2025-07-26)
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump json from 2.13.0 to 2.13.1 ([ae45255](https://github.com/patrick204nqh/gem-ci/commit/ae4525555a35d1a017b532568fed312fdde1841f))
+* **deps:** Bump rubocop from 1.78.0 to 1.79.0 in the development group ([01e4bc0](https://github.com/patrick204nqh/gem-ci/commit/01e4bc0da2e43ce48998756f1b18b743aa2d49cc))
+
+
+### 🤖 CI/CD
+
+* **deps:** Bump github/codeql-action from 2 to 3 in the security-actions group ([3a87434](https://github.com/patrick204nqh/gem-ci/commit/3a87434d016875f20d0d65342cad8c4261baa08a))
+* **deps:** Bump github/codeql-action in the security-actions group ([2cecda3](https://github.com/patrick204nqh/gem-ci/commit/2cecda34c7afa72919ab1f337dc94287e6b492c7))
+* **deps:** Bump github/super-linter from 4 to 7 in the quality-actions group ([394950e](https://github.com/patrick204nqh/gem-ci/commit/394950e4690a1e5b2560f8e24df3dc977ec55fec))
+* **deps:** Bump github/super-linter in the quality-actions group ([48573f1](https://github.com/patrick204nqh/gem-ci/commit/48573f1a80df84e1222ce72e33d0527b61a3bb72))
+* **deps:** Bump the github-actions group across 1 directory with 3 updates ([71f9254](https://github.com/patrick204nqh/gem-ci/commit/71f9254aa0670b7b0fa1f9fc5240bc7ecaff2cb1))
+* **deps:** Bump the github-actions group across 1 directory with 3 updates ([0c55db5](https://github.com/patrick204nqh/gem-ci/commit/0c55db53910128174b982ac9e4f9663605be6cae))
+
 ## [0.2.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.2.0...gem-ci/v0.2.1) (2025-07-26)
 
 
