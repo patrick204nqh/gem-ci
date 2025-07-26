@@ -1,36 +1,27 @@
 name: Run Tests
-description: 'Standardized test execution with coverage and reporting'
+description: 'Test execution with coverage'
 
 inputs:
-  ruby-version:
-    description: 'Ruby version for tests'
-    required: false
-    default: '3.3'
-  coverage-enabled:
-    description: 'Enable coverage reporting'
-    required: false
-    default: 'true'
   test-command:
     description: 'Test command to run'
     required: false
     default: 'bundle exec rspec'
-
-outputs:
-  coverage-percentage:
-    description: 'Test coverage percentage'
-    value: ${{ steps.coverage.outputs.percentage }}
+  coverage-enabled:
+    description: 'Enable coverage reporting'
+    required: false
+    default: 'true'
 
 runs:
   using: composite
   steps:
-    - name: 🧪 Run test suite
+    - name: 🧪 Run Tests
       shell: bash
       run: |
         set -euo pipefail
-        echo "🔄 Running tests with Ruby ${{ inputs.ruby-version }}"
+        
+        echo "🧪 Running tests..."
         
         if [ "${{ inputs.coverage-enabled }}" == "true" ]; then
-          echo "📊 Coverage reporting enabled"
           export COVERAGE=true
         fi
         
@@ -38,34 +29,10 @@ runs:
       env:
         COVERAGE: ${{ inputs.coverage-enabled }}
     
-    - name: 📊 Process coverage results
-      id: coverage
-      if: inputs.coverage-enabled == 'true'
-      shell: bash
-      run: |
-        set -euo pipefail
-        
-        if [ -f coverage/.resultset.json ]; then
-          # Extract coverage percentage from SimpleCov
-          coverage=$(ruby -r json -e "
-            data = JSON.parse(File.read('coverage/.resultset.json'))
-            puts data.dig('RSpec', 'coverage') || 0
-          " 2>/dev/null || echo "0")
-          
-          echo "percentage=$coverage" >> $GITHUB_OUTPUT
-          echo "📊 Test coverage: ${coverage}%"
-        else
-          echo "percentage=0" >> $GITHUB_OUTPUT
-          echo "⚠️ No coverage data found"
-        fi
-    
-    - name: 📤 Upload test results
-      if: always()
+    - name: 📤 Upload Coverage
+      if: inputs.coverage-enabled == 'true' && always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-ruby-${{ inputs.ruby-version }}
-        path: |
-          coverage/
-          tmp/rspec.xml
-          spec/reports/
-        retention-days: 7
+        name: coverage-${{ github.run_id }}
+        path: coverage/
+        if-no-files-found: warn

@@ -24,8 +24,8 @@ This folder contains validation workflows that test gem-ci setup, functionality,
   - 🌐 GitHub API access with generated token
   - 🤖 Branded bot identity verification
 - **Required Secrets**:
-  - `GEM_CI_APP_ID`
-  - `GEM_CI_PRIVATE_KEY`
+  - `APP_ID`
+  - `PRIVATE_KEY`
 
 ### `validate-slack-integration.yml`
 - **Purpose**: Validates Slack notification functionality
@@ -36,8 +36,8 @@ This folder contains validation workflows that test gem-ci setup, functionality,
   - 🔄 Conditional notifications (success/failure)
   - 🤖 Branded bot appearance in Slack
 - **Required Secrets**:
-  - `GEM_CI_APP_ID` (for branded bot)
-  - `GEM_CI_PRIVATE_KEY` (for branded bot)
+  - `APP_ID` (for branded bot)
+  - `PRIVATE_KEY` (for branded bot)
   - `SLACK_BOT_TOKEN` (Slack bot token, not webhook URL)
   - `SLACK_CHANNEL_ID` (target channel ID)
 
@@ -111,8 +111,8 @@ This folder contains validation workflows that test gem-ci setup, functionality,
 ## 🚀 Usage
 
 1. **Set up required secrets**:
-   - `GEM_CI_APP_ID`
-   - `GEM_CI_PRIVATE_KEY`
+   - `APP_ID`
+   - `PRIVATE_KEY`
    - `SLACK_BOT_TOKEN` (for Slack tests)
    - `SLACK_CHANNEL_ID` (for Slack tests)
 
