@@ -79,6 +79,9 @@ jobs:
     if: github.event_name == 'issues' || github.event_name == 'pull_request'
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+
       - name: "🔑 Generate GitHub App Token"
         id: app_token
         uses: ./.github/actions/github-app-token
@@ -119,6 +122,9 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+
       - name: "🔑 Generate GitHub App Token"
         id: app_token
         uses: ./.github/actions/github-app-token
@@ -144,6 +150,9 @@ jobs:
     if: github.event.action == 'opened' && github.event_name == 'issues'
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+
       - name: "🔑 Generate GitHub App Token"
         id: app_token
         uses: ./.github/actions/github-app-token

@@ -2,7 +2,7 @@
 # Using proven patterns for reliable automation
 
 # Type labels based on file changes
-"type: ci/cd":
+"type: ci-cd":
   - ".github/workflows/**"
   - ".github/actions/**"
   - "Rakefile"
