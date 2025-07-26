@@ -1,3 +1,10 @@
+# 📋 Workflow: Release Management & Publishing
+# 🎯 Purpose: Gem publishing, release notes, version management
+# 🔄 Triggers: Push to main/master, manual dispatch
+# 📦 Outputs: Published gem, release notes, tags
+# ⏱️ Duration: ~4-10 minutes
+# 🔗 Dependencies: RubyGems API token
+
 name: 06 - Release
 
 on:

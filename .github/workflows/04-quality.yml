@@ -1,3 +1,10 @@
+# 📋 Workflow: Code Quality & Analysis
+# 🎯 Purpose: Code linting, RuboCop analysis, documentation generation
+# 🔄 Triggers: Push/PR to main/master branches
+# 📦 Outputs: Quality reports, documentation, complexity analysis
+# ⏱️ Duration: ~6-12 minutes
+# 🔗 Dependencies: GitHub App authentication
+
 name: 04 - Quality
 
 on:

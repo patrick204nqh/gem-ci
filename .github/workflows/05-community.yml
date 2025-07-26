@@ -1,3 +1,10 @@
+# 📋 Workflow: Community Management & Engagement
+# 🎯 Purpose: Issue labeling, contributor recognition, stale management
+# 🔄 Triggers: Issue/PR events, daily at 1 AM UTC
+# 📦 Outputs: Labels, comments, community reports
+# ⏱️ Duration: ~3-8 minutes
+# 🔗 Dependencies: GitHub App authentication
+
 name: 05 - Community
 
 on:

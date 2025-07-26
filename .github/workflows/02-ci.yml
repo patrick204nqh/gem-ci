@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cache-key: ${{ steps.cache-key.outputs.key }}
+    
     steps:
       - name: "📥 Checkout Repository"
         uses: actions/checkout@v4
@@ -70,13 +71,30 @@ jobs:
         uses: ./.github/actions/performance-monitor
         with:
           step-name: ${{ matrix.job }}
-          command: >
+          command: |
             case "${{ matrix.job }}" in
-              test) echo "🧪 Running test suite..." && bundle exec rspec --format progress --format junit --out tmp/rspec.xml ;;
-              lint) echo "🔍 Running linting..." && bundle exec rubocop --format github && bundle exec yard stats --list-undoc ;;
-              security) echo "🔒 Running security scan..." && gem install bundler-audit && bundle audit --update ;;
-              docs) echo "📚 Checking documentation..." && bundle exec yard check ;;
-              *) echo "❌ Unknown job: ${{ matrix.job }}" && exit 1 ;;
+              test)
+                echo "🧪 Running test suite..."
+                bundle exec rspec --format progress --format junit --out tmp/rspec.xml
+                ;;
+              lint)
+                echo "🔍 Running linting..."
+                bundle exec rubocop --format github
+                bundle exec yard stats --list-undoc
+                ;;
+              security)
+                echo "🔒 Running security scan..."
+                gem install bundler-audit
+                bundle audit --update
+                ;;
+              docs)
+                echo "📚 Checking documentation..."
+                bundle exec yard check
+                ;;
+              *)
+                echo "❌ Unknown job: ${{ matrix.job }}"
+                exit 1
+                ;;
             esac
 
   test:
@@ -209,7 +227,7 @@ jobs:
               summary += `✅ **Performance Good**: Workflow completed efficiently\n\n`;
             }
             
-            if (testResult === 'success' && lintResult === 'success' && buildResult === 'success') {
+            if (testResult === 'success' && parallelResult === 'success' && buildResult === 'success') {
               summary += '🎉 **All checks passed!** Ready for review and merge.\n';
             } else {
               summary += '⚠️ **Some checks failed.** Please review the logs and fix any issues.\n';
