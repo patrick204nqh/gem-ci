@@ -68,30 +68,34 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
       
       - name: "🏃 Run CI Job - ${{ matrix.job }}"
-        uses: ./.github/actions/performance-monitor
-        with:
-          step-name: ${{ matrix.job }}
-          command: |
-            case "${{ matrix.job }}" in
-              lint)
-                echo "🔍 Running linting..."
-                bundle exec rubocop --format github
-                bundle exec yard stats --list-undoc
-                ;;
-              security)
-                echo "🔒 Running security scan..."
-                gem install bundler-audit
-                bundle audit --update
-                ;;
-              docs)
-                echo "📚 Checking documentation..."
-                bundle exec yard check
-                ;;
-              *)
-                echo "❌ Unknown job: ${{ matrix.job }}"
-                exit 1
-                ;;
-            esac
+        run: |
+          echo "📊 Starting: ${{ matrix.job }}"
+          START_TIME=$(date +%s)
+          
+          case "${{ matrix.job }}" in
+            lint)
+              echo "🔍 Running linting..."
+              bundle exec rubocop --format github
+              bundle exec yard stats --list-undoc
+              ;;
+            security)
+              echo "🔒 Running security scan..."
+              gem install bundler-audit
+              bundle audit --update
+              ;;
+            docs)
+              echo "📚 Checking documentation..."
+              bundle exec yard check
+              ;;
+            *)
+              echo "❌ Unknown job: ${{ matrix.job }}"
+              exit 1
+              ;;
+          esac
+          
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "⏱️ Duration: ${DURATION}s"
 
   test:
     name: "Test Ruby ${{ matrix.ruby }} on ${{ matrix.os }}"
