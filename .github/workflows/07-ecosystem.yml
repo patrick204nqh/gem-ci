@@ -155,7 +155,7 @@ jobs:
 
       - name: 🧪 Run compatibility tests
         run: |
-          bundle exec rake test
+          bundle exec rake spec
         continue-on-error: ${{ matrix.ruby_version == 'head' }}
 
       - name: 📊 Report compatibility results

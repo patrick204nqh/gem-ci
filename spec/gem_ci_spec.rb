@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Gem::Ci do
+RSpec.describe GemCi do
   it "has a version number" do
-    expect(Gem::Ci::VERSION).not_to be nil
+    expect(GemCi::VERSION).not_to be nil
   end
 end

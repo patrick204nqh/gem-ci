@@ -1,0 +1,23 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "ruby",
+      "package-name": "gem-ci",
+      "version-file": "lib/gem_ci/version.rb",
+      "extra-files": [
+        "gem-ci.gemspec"
+      ],
+      "changelog-sections": [
+        {"type": "feat", "section": "🚀 Features", "hidden": false},
+        {"type": "fix", "section": "🐛 Bug Fixes", "hidden": false},
+        {"type": "security", "section": "🔒 Security", "hidden": false},
+        {"type": "docs", "section": "📚 Documentation", "hidden": false},
+        {"type": "deps", "section": "🔧 Dependencies", "hidden": false},
+        {"type": "refactor", "section": "♻️ Refactoring", "hidden": false},
+        {"type": "test", "section": "🧪 Testing", "hidden": false},
+        {"type": "ci", "section": "🤖 CI/CD", "hidden": false},
+        {"type": "chore", "section": "🔧 Maintenance", "hidden": true}
+      ]
+    }
+  }
+}

@@ -60,27 +60,12 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 🎯 Release Please
-        uses: google-github-actions/release-please-action@v3
+        uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ steps.app_token.outputs.token }}
-          release-type: ruby
-          package-name: gem-ci
-          version-file: lib/gem/ci/version.rb
-          changelog-sections: |
-            [
-              {"type":"feat","section":"🚀 Features","hidden":false},
-              {"type":"fix","section":"🐛 Bug Fixes","hidden":false},
-              {"type":"security","section":"🔒 Security","hidden":false},
-              {"type":"docs","section":"📚 Documentation","hidden":false},
-              {"type":"deps","section":"🔧 Dependencies","hidden":false},
-              {"type":"refactor","section":"♻️ Refactoring","hidden":false},
-              {"type":"test","section":"🧪 Testing","hidden":false},
-              {"type":"ci","section":"🤖 CI/CD","hidden":false},
-              {"type":"chore","section":"🔧 Maintenance","hidden":true}
-            ]
-          extra-files: |
-            gem-ci.gemspec
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
 
   build-gem:
     name: 💎 Build Gem

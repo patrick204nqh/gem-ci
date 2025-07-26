@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/gem/ci/version"
+require_relative "lib/gem_ci/version"
 
 Gem::Specification.new do |spec|
   spec.name = "gem-ci"
-  spec.version = Gem::Ci::VERSION
+  spec.version = GemCi::VERSION
   spec.authors = ["Huy Nguyen"]
   spec.email = ["patrick204nqh@gmail.com"]
 
