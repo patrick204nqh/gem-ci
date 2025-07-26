@@ -46,7 +46,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 🔍 Manage stale issues and PRs
-        uses: actions/stale@v8
+        uses: actions/stale@v9
         with:
           repo-token: ${{ steps.app_token.outputs.token }}
           days-before-stale: ${{ env.DAYS_BEFORE_STALE }}

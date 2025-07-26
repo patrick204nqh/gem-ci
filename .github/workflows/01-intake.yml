@@ -91,7 +91,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: "Welcome First-Time Contributors"
-        uses: actions/first-interaction@v1
+        uses: actions/first-interaction@v2
         with:
           repo-token: ${{ steps.app_token.outputs.token }}
           issue-message: |
@@ -174,7 +174,7 @@ jobs:
             });
             
       - name: "Add to Project Board"
-        uses: actions/add-to-project@v0.5.0
+        uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/users/${{ github.repository_owner }}/projects/1
           github-token: ${{ steps.app_token.outputs.token }}
