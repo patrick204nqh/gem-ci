@@ -9,7 +9,8 @@ Gem::Specification.new do |spec|
   spec.email = ["patrick204nqh@gmail.com"]
 
   spec.summary = "Comprehensive OSS automation showcase with battle-tested GitHub Actions"
-  spec.description = "A showcase repository demonstrating advanced CI/CD workflows, automated testing, security scanning, community management, and comprehensive automation for Ruby gems."
+  spec.description = "A showcase repository demonstrating advanced CI/CD workflows, automated testing, " \
+                     "security scanning, community management, and comprehensive automation for Ruby gems."
   spec.homepage = "https://github.com/patrick204nqh/gem-ci"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"
