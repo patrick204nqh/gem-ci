@@ -90,6 +90,10 @@ jobs:
                 echo "📚 Checking documentation..."
                 bundle exec yard check
                 ;;
+              *)
+                echo "❌ Unknown job: ${{ matrix.job }}"
+                exit 1
+                ;;
             esac
 
   test:

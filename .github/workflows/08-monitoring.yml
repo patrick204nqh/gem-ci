@@ -138,20 +138,9 @@ jobs:
             
             console.log(performanceReport);
             
-            // Store metrics as repository variables
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'WORKFLOW_SUCCESS_RATE',
-              value: successRate.toString()
-            });
-            
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'WORKFLOW_AVG_DURATION',
-              value: avgWorkflowDuration.toString()
-            });
+            // Output metrics for monitoring
+            console.log(`📊 WORKFLOW_SUCCESS_RATE: ${successRate}%`);
+            console.log(`📊 WORKFLOW_AVG_DURATION: ${avgWorkflowDuration}min`);
 
   action-usage-analysis:
     name: 🔍 GitHub Actions Usage Analysis
@@ -416,20 +405,9 @@ jobs:
             
             console.log(healthReport);
             
-            // Store health metrics
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'REPO_HEALTH_SCORE',
-              value: overallHealth.toString()
-            });
-            
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'ACTIVE_CONTRIBUTORS',
-              value: contributors.size.toString()
-            });
+            // Output health metrics for monitoring
+            console.log(`📊 REPO_HEALTH_SCORE: ${overallHealth}/100`);
+            console.log(`📊 ACTIVE_CONTRIBUTORS: ${contributors.size}`);
 
   monitoring-summary:
     name: 📋 Monitoring Dashboard Summary

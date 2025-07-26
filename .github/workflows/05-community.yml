@@ -84,6 +84,7 @@ jobs:
       - name: 🎉 Recognize contributor
         uses: actions/github-script@v7
         with:
+          github-token: ${{ steps.app_token.outputs.token }}
           script: |
             const { context } = require('@actions/github');
             const { data: pr } = await github.rest.pulls.get({
@@ -222,15 +223,11 @@ jobs:
             
             console.log(healthReport);
             
-            // Store metrics for other workflows
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'COMMUNITY_HEALTH_SCORE',
-              value: Math.round(((closedIssues / Math.max(openIssues + closedIssues, 1)) + 
-                               (mergedPRs / Math.max(recentPRsFiltered.length, 1)) + 
-                               Math.min(contributors.size / 10, 1)) / 3 * 100).toString()
-            });
+            // Output metrics for monitoring
+            const communityScore = Math.round(((closedIssues / Math.max(openIssues + closedIssues, 1)) + 
+                                   (mergedPRs / Math.max(recentPRsFiltered.length, 1)) + 
+                                   Math.min(contributors.size / 10, 1)) / 3 * 100);
+            console.log(`📊 COMMUNITY_HEALTH_SCORE: ${communityScore}%`);
 
   issue-labeling:
     name: 🏷️ Enhanced Issue Labeling

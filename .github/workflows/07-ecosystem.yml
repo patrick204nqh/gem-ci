@@ -382,10 +382,5 @@ jobs:
             
             console.log(summary);
             
-            // Store ecosystem health metrics
-            await github.rest.actions.setRepoVariable({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'ECOSYSTEM_HEALTH_SCORE',
-              value: Math.round((successful / total) * 100).toString()
-            });
+            // Output ecosystem health metrics for monitoring
+            console.log(`📊 ECOSYSTEM_HEALTH_SCORE: ${Math.round((successful / total) * 100)}%`);
