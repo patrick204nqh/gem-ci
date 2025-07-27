@@ -1,8 +1,8 @@
 # 📋 Workflow: Bot Command Handler
-# 🎯 Purpose: Handle bot commands from PR/issue comments
-# 🔄 Triggers: Issue comments
-# 📦 Outputs: Automated actions based on commands
-# ⏱️ Duration: ~1-3 minutes
+# 🎯 Purpose: Handle basic bot commands from issue/PR comments
+# 🔄 Triggers: Issue/PR comments with /gem-ci commands
+# 📦 Outputs: Automated responses
+# ⏱️ Duration: ~1 minute
 # 🔗 Dependencies: GitHub App token
 
 name: 09 - Bot Commands
@@ -13,134 +13,22 @@ on:
 
 env:
   RUBY_VERSION: "3.3"
-  NODE_VERSION: "20"
-  CACHE_VERSION: "v1"
 
 jobs:
-  parse-command:
-    name: 🤖 Parse Bot Command
+  # 🤖 Parse and handle bot commands
+  handle-command:
+    name: 🤖 Handle Bot Command
     runs-on: ubuntu-latest
-    if: |
-      github.event.issue.pull_request &&
-      (startsWith(github.event.comment.body, '/gem-ci') || contains(github.event.comment.body, '/gem-ci'))
+    # Work with both issues and PRs that mention /gem-ci
+    if: contains(github.event.comment.body, '/gem-ci')
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
       issues: write
-    outputs:
-      command: ${{ steps.parse.outputs.command }}
-      action: ${{ steps.parse.outputs.action }}
-      from_version: ${{ steps.parse.outputs.from_version }}
-      to_version: ${{ steps.parse.outputs.to_version }}
-      valid_command: ${{ steps.parse.outputs.valid_command }}
-    
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 🔑 Generate GitHub App Token
-        id: app_token
-        uses: ./.github/actions/github-app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-
-      - name: 🔍 Parse command
-        id: parse
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          script: |
-            const comment = context.payload.comment.body.toLowerCase();
-            console.log('Comment body:', comment);
-            
-            // Check for slash command
-            if (!comment.includes('/gem-ci')) {
-              console.log('No /gem-ci command found');
-              core.setOutput('valid_command', 'false');
-              return;
-            }
-            
-            // Parse different command types
-            let command = '';
-            let action = '';
-            let fromVersion = '';
-            let toVersion = '';
-            let validCommand = 'false';
-            
-            // Command: /gem-ci revise release [from] to [to]
-            const reviseMatch = comment.match(/\/gem-ci\s+revise\s+release\s+(\w+)\s+to\s+(\w+)/);
-            if (reviseMatch) {
-              command = 'revise-release';
-              action = 'revise';
-              fromVersion = reviseMatch[1];
-              toVersion = reviseMatch[2];
-              validCommand = 'true';
-              console.log(`Parsed revise command: ${fromVersion} -> ${toVersion}`);
-            }
-            
-            // Command: /gem-ci create release [type]
-            const createMatch = comment.match(/\/gem-ci\s+create\s+release\s+(\w+)/);
-            if (createMatch) {
-              command = 'create-release';
-              action = 'create';
-              toVersion = createMatch[1];
-              validCommand = 'true';
-              console.log(`Parsed create command: ${toVersion}`);
-            }
-            
-            // Command: /gem-ci cancel release
-            if (comment.includes('/gem-ci cancel release')) {
-              command = 'cancel-release';
-              action = 'cancel';
-              validCommand = 'true';
-              console.log('Parsed cancel command');
-            }
-            
-            // Command: /gem-ci help
-            if (comment.includes('/gem-ci help')) {
-              command = 'help';
-              action = 'help';
-              validCommand = 'true';
-              console.log('Parsed help command');
-            }
-            
-            // Set outputs
-            core.setOutput('command', command);
-            core.setOutput('action', action);
-            core.setOutput('from_version', fromVersion);
-            core.setOutput('to_version', toVersion);
-            core.setOutput('valid_command', validCommand);
-            
-            // Set output for reaction step
-            core.setOutput('valid_command', validCommand);
-            core.setOutput('comment_id', context.payload.comment.id);
-
-      - name: 👀 React to valid command
-        if: steps.parse.outputs.valid_command == 'true'
-        uses: ./.github/actions/add-reaction
-        with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          reaction-type: 'eyes'
-          target-type: 'comment'
-          comment-id: ${{ steps.parse.outputs.comment_id }}
-
-  revise-release:
-    name: 🔄 Revise Release Type
-    runs-on: ubuntu-latest
-    needs: parse-command
-    if: |
-      needs.parse-command.outputs.valid_command == 'true' &&
-      needs.parse-command.outputs.command == 'revise-release'
-    permissions:
-      contents: write
       pull-requests: write
     
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: 🔑 Generate GitHub App Token
         id: app_token
@@ -149,170 +37,112 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
 
-      - name: 🔄 Revise release type
+      - name: 🤖 Process bot command
         uses: actions/github-script@v7
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
-            const fromVersion = '${{ needs.parse-command.outputs.from_version }}';
-            const toVersion = '${{ needs.parse-command.outputs.to_version }}';
+            const comment = context.payload.comment.body.toLowerCase().trim();
+            const isPR = context.payload.issue.pull_request != null;
+            const issueNumber = context.payload.issue.number;
+            const author = context.payload.comment.user.login;
+            const commentId = context.payload.comment.id;
             
-            console.log(`Revising release from ${fromVersion} to ${toVersion}`);
+            console.log(`📝 Comment: "${comment}"`);
+            console.log(`📍 Context: ${isPR ? 'Pull Request' : 'Issue'} #${issueNumber}`);
+            console.log(`👤 Author: @${author}`);
             
-            // Get current open release PRs
-            const { data: prs } = await github.rest.pulls.list({
+            // React to show command was received
+            await github.rest.reactions.createForIssueComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'open',
-              head: `${context.repo.owner}:release-please--branches--master--components--gem-ci`
+              comment_id: commentId,
+              content: 'eyes'
             });
             
-            if (prs.length === 0) {
+            // Handle status command
+            if (comment.includes('/gem-ci status')) {
+              let statusText = `## 📊 Status Report\n\n`;
+              
+              if (isPR) {
+                // Get PR info and check status
+                const { data: pr } = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: issueNumber
+                });
+                
+                // Get check runs for the PR
+                const { data: checkRuns } = await github.rest.checks.listForRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: pr.head.sha
+                });
+                
+                statusText += `**PR**: #${issueNumber} (${pr.state})\n`;
+                statusText += `**Branch**: \`${pr.head.ref}\` → \`${pr.base.ref}\`\n`;
+                statusText += `**Mergeable**: ${pr.mergeable ? '✅' : '❌'}\n\n`;
+                
+                if (checkRuns.check_runs.length > 0) {
+                  statusText += `**Checks**:\n`;
+                  checkRuns.check_runs.slice(0, 5).forEach(check => {
+                    const emoji = check.conclusion === 'success' ? '✅' : 
+                                 check.conclusion === 'failure' ? '❌' : '🔄';
+                    statusText += `- ${emoji} ${check.name}\n`;
+                  });
+                } else {
+                  statusText += `**Checks**: No checks found\n`;
+                }
+              } else {
+                // For issues, show recent workflow status
+                const { data: workflows } = await github.rest.actions.listWorkflowRunsForRepo({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  per_page: 3
+                });
+                
+                statusText += `**Recent Workflows**:\n`;
+                workflows.workflow_runs.slice(0, 3).forEach(run => {
+                  const emoji = run.conclusion === 'success' ? '✅' : 
+                               run.conclusion === 'failure' ? '❌' : '🔄';
+                  const date = new Date(run.created_at).toLocaleDateString();
+                  statusText += `- ${emoji} ${run.name} (${date})\n`;
+                });
+              }
+              
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: `❌ No open release PR found to revise.`
+                issue_number: issueNumber,
+                body: statusText
               });
-              return;
-            }
-            
-            const releasePR = prs[0];
-            console.log(`Found release PR: #${releasePR.number}`);
-            
-            // Validate version types
-            const validTypes = ['patch', 'minor', 'major'];
-            if (!validTypes.includes(fromVersion) || !validTypes.includes(toVersion)) {
-              await github.rest.issues.createComment({
+              
+              // React with rocket for status
+              await github.rest.reactions.createForIssueComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: `❌ Invalid version types. Use: patch, minor, or major`
+                comment_id: commentId,
+                content: 'rocket'
               });
+              
+              console.log('✅ Showed status');
               return;
             }
             
-            // Update the release PR with manual override
-            const newBody = releasePR.body + `\n\n---\n🤖 **Release type manually revised**: ${fromVersion} → ${toVersion}\n\nRequested by: @${context.payload.comment.user.login}`;
-            
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: releasePR.number,
-              body: newBody
-            });
-            
-            // Add comment to original issue
+            // Handle unknown commands
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `✅ Release type revised from **${fromVersion}** to **${toVersion}**!\n\nUpdated release PR: #${releasePR.number}\n\n*Note: The actual version calculation still depends on conventional commits. This is a documentation update.*`
+              issue_number: issueNumber,
+              body: `❌ Sorry @${author}, I didn't understand that command.\n\n💡 Try \`/gem-ci status\` to see current status.`
             });
             
-            // Set output for success reaction
-            core.setOutput('comment_id', context.payload.comment.id);
-
-      - name: 👍 React with success
-        uses: ./.github/actions/add-reaction
-        with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          reaction-type: '+1'
-          target-type: 'comment'
-          comment-id: ${{ github.event.comment.id }}
-
-  help-command:
-    name: 📚 Show Help
-    runs-on: ubuntu-latest
-    needs: parse-command
-    if: needs.parse-command.outputs.command == 'help'
-    permissions:
-      issues: write
-    
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 🔑 Generate GitHub App Token
-        id: app_token
-        uses: ./.github/actions/github-app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-
-      - name: 📚 Show available commands
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          script: |
-            const helpText = \`## 🤖 Gem-CI Bot Commands
-            
-            Hi @\${context.payload.comment.user.login}! Here are the available slash commands:
-            
-            ### 🔄 Release Management
-            - \\\`/gem-ci revise release minor to patch\\\` - Revise release type
-            - \\\`/gem-ci revise release major to minor\\\` - Revise release type  
-            - \\\`/gem-ci cancel release\\\` - Cancel current release
-            
-            ### 💡 Other Commands
-            - \\\`/gem-ci help\\\` - Show this help message
-            
-            ### 📝 Notes
-            - Commands are case-insensitive
-            - Version types: \\\`patch\\\`, \\\`minor\\\`, \\\`major\\\`
-            - Bot responds with reactions to confirm command processing
-            - Use slash commands instead of @ mentions for better practice
-            
-            ---
-            *Powered by gem-ci automation* 🚀\`;
-            
-            await github.rest.issues.createComment({
+            // React with confusion for unknown commands
+            await github.rest.reactions.createForIssueComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: helpText
-            });
-
-  invalid-command:
-    name: ❌ Handle Invalid Commands
-    runs-on: ubuntu-latest
-    needs: parse-command
-    if: |
-      needs.parse-command.outputs.valid_command == 'false' &&
-      contains(github.event.comment.body, '/gem-ci')
-    permissions:
-      issues: write
-    
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      - name: 🔑 Generate GitHub App Token
-        id: app_token
-        uses: ./.github/actions/github-app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-
-      - name: ❌ Respond to invalid command
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `❌ Sorry @${context.payload.comment.user.login}, I didn't understand that command.\n\nTry \`/gem-ci help\` to see available commands.`
+              comment_id: commentId,
+              content: 'confused'
             });
             
-            // Set output for confused reaction
-            core.setOutput('comment_id', context.payload.comment.id);
-
-      - name: 😕 React with confusion
-        uses: ./.github/actions/add-reaction
-        with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          reaction-type: 'confused'
-          target-type: 'comment'
-          comment-id: ${{ github.event.comment.id }}
+            console.log('❌ Unknown command handled');
