@@ -189,11 +189,18 @@ jobs:
       - name: "📥 Checkout Repository"
         uses: actions/checkout@v4
         
+      - name: "🔑 Generate GitHub App Token"
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+        
       - name: "📊 Update PR Status"
         if: github.event_name == 'pull_request'
         uses: ./.github/actions/update-pr-status
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app_token.outputs.token }}
           workflow-name: "CI Pipeline"
           status: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'success' || 'failure' }}
           summary: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'All tests passed, gem built successfully' || 'Some CI checks failed' }}
