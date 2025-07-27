@@ -57,39 +57,60 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><div id='filecontents'>
-<h1 id="label-F0-9F-A4-96+Ruby+Gem+Automation+Template">🤖 Ruby Gem Automation Template</h1>
+      <div id="content"><div id='filecontents'><div align="center">
 
-<blockquote>
-<p><strong>The ultimate automation template for Ruby gem projects</strong> - Battle-tested workflows for seamless development, security, and releases.</p>
-</blockquote>
+# 🏆 gem-ci
 
+![gem-ci Logo](public/gem-ci-transparent-bg.png)
+
+**The Ultimate Ruby Gem Automation Showcase**
+
+*Battle-tested GitHub Actions workflows with comprehensive CI/CD, security, and community management*
+
+[![Ruby](https://img.shields.io/badge/Ruby-3.3+-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](https://www.ruby-lang.org/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE.txt)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](CONTRIBUTING.md)
+
+[![CI Status](https://github.com/patrick204nqh/gem-ci/workflows/02%20-%20CI/badge.svg)](https://github.com/patrick204nqh/gem-ci/actions/workflows/02-ci.yml)
+[![Security](https://github.com/patrick204nqh/gem-ci/workflows/03%20-%20Security/badge.svg)](https://github.com/patrick204nqh/gem-ci/actions/workflows/03-security.yml)
+[![Quality Gate](https://github.com/patrick204nqh/gem-ci/workflows/04%20-%20Quality/badge.svg)](https://github.com/patrick204nqh/gem-ci/actions/workflows/04-quality.yml)
+
+</div>
 <h2 id="label-E2-9C-A8+What+This+Provides">✨ What This Provides</h2>
 
-<p>This repository serves as the <strong>perfect template</strong> for Ruby gem automation. It includes 8 comprehensive workflows that handle every aspect of your gem’s lifecycle:</p>
+<p>This repository serves as the <strong>ultimate showcase</strong> for Ruby gem automation. It includes <strong>9 comprehensive workflows</strong> that handle every aspect of your gem’s lifecycle:</p>
 <ul><li>
-<p>🔄 <strong>Automated CI/CD</strong> across Ruby versions and platforms</p>
+<p>🔄 <strong>Automated CI/CD</strong> with consolidated PR status dashboard</p>
 </li><li>
 <p>🔒 <strong>Security scanning</strong> and vulnerability detection</p>
 </li><li>
-<p>📊 <strong>Code quality</strong> enforcement and coverage reporting</p>
+<p>📊 <strong>Code quality</strong> enforcement with focused linting</p>
 </li><li>
 <p>🚀 <strong>Automated releases</strong> with semantic versioning</p>
 </li><li>
 <p>👥 <strong>Community management</strong> and contributor engagement</p>
 </li><li>
-<p>📈 <strong>Performance monitoring</strong> and health checks</p>
+<p>📈 <strong>Performance monitoring</strong> and ecosystem health</p>
+</li><li>
+<p>🤖 <strong>Bot commands</strong> for interactive workflow management</p>
+</li><li>
+<p>🌐 <strong>Ecosystem integration</strong> and compatibility checks</p>
+</li><li>
+<p>📊 <strong>Advanced monitoring</strong> with cost-optimized scheduling</p>
 </li></ul>
 
 <h2 id="label-F0-9F-9A-80+Quick+Start">🚀 Quick Start</h2>
 <ol><li>
 <p><strong>Use this template</strong> to create your new repository</p>
 </li><li>
-<p><strong>Set up secrets</strong> following the <a href="docs/SECRETS_SETUP_GUIDE_md.html">Secrets Setup Guide</a></p>
+<p><strong>Set up secrets</strong> following the <a href="docs/setup/secrets_md.html">Secrets Setup Guide</a></p>
 </li><li>
 <p><strong>Configure labels</strong> by running the label sync workflow</p>
 </li><li>
 <p><strong>Import rulesets</strong> from <code>.github/config/rulesets/</code></p>
+</li><li>
+<p><strong>Test locally</strong> using our <a href="docs/guides/local-testing_md.html">Local Testing Guide</a></p>
 </li><li>
 <p><strong>Start developing</strong> - automation handles the rest!</p>
 </li></ol>
@@ -109,17 +130,17 @@
 <tbody>
 <tr>
 <td><strong>🔄 CI/CD</strong></td>
-<td>Multi-Ruby testing</td>
+<td>Ruby testing</td>
 <td><code>02-ci.yml</code></td>
 <td><code>ruby/setup-ruby@v1</code></td>
-<td>Ruby 3.2, 3.3, 3.4</td>
+<td>Ruby 3.3 (optimized)</td>
 </tr>
 <tr>
 <td></td>
-<td>Cross-platform testing</td>
+<td>Ubuntu testing</td>
 <td><code>02-ci.yml</code></td>
 <td><code>actions/checkout@v4</code></td>
-<td>Ubuntu, macOS</td>
+<td>Ubuntu-latest (cost optimized)</td>
 </tr>
 <tr>
 <td></td>
@@ -210,14 +231,14 @@
 <td>Label sync</td>
 <td><code>01-intake.yml</code></td>
 <td><code>crazy-max/ghaction-github-labeler@v5</code></td>
-<td><code>.github/labels.yml</code></td>
+<td><code>.github/config/labels.yml</code></td>
 </tr>
 <tr>
 <td></td>
 <td>Auto-labeling</td>
 <td><code>01-intake.yml</code></td>
 <td><code>actions/labeler@v5</code></td>
-<td><code>.github/labeler.yml</code></td>
+<td><code>.github/config/labeler.yml</code></td>
 </tr>
 <tr>
 <td></td>
@@ -335,15 +356,64 @@
 <td><strong>📢 Notifications</strong></td>
 <td>Slack integration</td>
 <td>Multiple</td>
-<td><code>slackapi/slack-github-action@v1.27.0</code></td>
-<td><code>SLACK_BOT_TOKEN</code></td>
+<td>Custom shared action</td>
+<td><code>SLACK_BOT_TOKEN</code> + <code>SLACK_CHANNEL_ID</code></td>
 </tr>
 <tr>
 <td></td>
-<td>Email notifications</td>
-<td>GitHub native</td>
-<td>Repository settings</td>
-<td>Configurable recipients</td>
+<td>PR Status Dashboard</td>
+<td>Multiple</td>
+<td><code>update-pr-status</code> action</td>
+<td>Consolidated PR comments</td>
+</tr>
+<tr>
+<td><strong>🤖 Bot Commands</strong></td>
+<td>Release management</td>
+<td><code>09-bot-commands.yml</code></td>
+<td><code>actions/github-script@v7</code></td>
+<td>Slash commands</td>
+</tr>
+<tr>
+<td></td>
+<td>Help system</td>
+<td><code>09-bot-commands.yml</code></td>
+<td><code>actions/github-script@v7</code></td>
+<td>Interactive help</td>
+</tr>
+<tr>
+<td><strong>🌐 Ecosystem</strong></td>
+<td>Dependency health</td>
+<td><code>07-ecosystem.yml</code></td>
+<td>Custom scripts</td>
+<td>Bi-weekly checks</td>
+</tr>
+<tr>
+<td></td>
+<td>Compatibility matrix</td>
+<td><code>07-ecosystem.yml</code></td>
+<td><code>ruby/setup-ruby@v1</code></td>
+<td>Ruby version testing</td>
+</tr>
+<tr>
+<td></td>
+<td>Performance benchmarks</td>
+<td><code>07-ecosystem.yml</code></td>
+<td>Custom benchmark scripts</td>
+<td>Release validation</td>
+</tr>
+<tr>
+<td><strong>📊 Monitoring</strong></td>
+<td>Workflow metrics</td>
+<td><code>08-monitoring.yml</code></td>
+<td><code>actions/github-script@v7</code></td>
+<td>Weekly performance tracking</td>
+</tr>
+<tr>
+<td></td>
+<td>Repository health</td>
+<td><code>08-monitoring.yml</code></td>
+<td>Custom health checks</td>
+<td>Automated health reports</td>
 </tr>
 <tr>
 <td><strong>🧪 Validation</strong></td>
@@ -429,13 +499,13 @@
 </thead>
 <tbody>
 <tr>
-<td><code>.github/labels.yml</code></td>
+<td><code>.github/config/labels.yml</code></td>
 <td>Label definitions and colors</td>
 <td>✅ Yes</td>
 </tr>
 <tr>
-<td><code>.github/labeler.yml</code></td>
-<td>Auto-labeling rules</td>
+<td><code>.github/config/labeler.yml</code></td>
+<td>Auto-labeling rules for PRs</td>
 <td>✅ Yes</td>
 </tr>
 <tr>
@@ -454,6 +524,16 @@
 <td>✅ Yes</td>
 </tr>
 <tr>
+<td><code>.github/config/release-please-config.json</code></td>
+<td>Release configuration</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><code>.github/config/release-please-manifest.json</code></td>
+<td>Release manifest</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
 <td><code>.github/config/rulesets/*.json</code></td>
 <td>Repository protection rules</td>
 <td>❌ Optional</td>
@@ -461,147 +541,135 @@
 </tbody>
 </table>
 
+<h3 id="label-Bot+Commands"><strong>Bot Commands</strong></h3>
+
+<p>&lt;details&gt; &lt;summary&gt;Available interactive commands (comment on issues/PRs)&lt;/summary&gt;</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/gem-ci help</code></td>
+<td>Show available commands</td>
+<td><code>/gem-ci help</code></td>
+</tr>
+<tr>
+<td><code>/gem-ci revise release [from] to [to]</code></td>
+<td>Change release type</td>
+<td><code>/gem-ci revise release minor to patch</code></td>
+</tr>
+<tr>
+<td><code>/gem-ci cancel release</code></td>
+<td>Cancel current release PR</td>
+<td><code>/gem-ci cancel release</code></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Usage</strong>: Comment these commands on any issue or PR to trigger bot actions. &lt;/details&gt;</p>
+
 <h2 id="label-F0-9F-94-84+Ruby+Gem+Repository+Lifecycle">🔄 Ruby Gem Repository Lifecycle</h2>
 
 <p>This template provides a complete automation solution that follows the natural lifecycle of a Ruby gem repository:</p>
 
 <h3 id="label-F0-9F-9A-80+Phase+1-3A+Repository+Setup+-28One-time-29">🚀 <strong>Phase 1: Repository Setup</strong> (One-time)</h3>
 <ul><li>
-<p><strong>🏷️ Label Management</strong>: Sync professional labels with <code>01-intake.yml</code></p>
+<p><strong>🏷️ Label Management</strong>: Sync professional labels and organize repository structure</p>
 </li><li>
 <p><strong>🔐 Secret Configuration</strong>: Setup GitHub App authentication and integrations</p>
 </li><li>
 <p><strong>🛡️ Branch Protection</strong>: Configure repository rulesets and security policies</p>
 </li><li>
-<p><strong>⚙️ Initial Configuration</strong>: Dependabot, CodeQL, and workflow settings</p>
+<p><strong>⚙️ Initial Configuration</strong>: Setup dependency management, security scanning, and automation workflows</p>
 </li></ul>
 
 <h3 id="label-F0-9F-92-BB+Phase+2-3A+Development+Cycle+-28Daily-29">💻 <strong>Phase 2: Development Cycle</strong> (Daily)</h3>
 <ul><li>
-<p><strong>🧪 Continuous Testing</strong>: Multi-Ruby version testing with <code>02-ci.yml</code></p>
+<p><strong>🧪 Continuous Testing</strong>: Run comprehensive test suites and validate gem functionality</p>
 </li><li>
-<p><strong>🔒 Security Scanning</strong>: Vulnerability detection with <code>03-security.yml</code></p>
+<p><strong>🔒 Security Scanning</strong>: Detect vulnerabilities in code and dependencies</p>
 </li><li>
-<p><strong>📊 Code Quality</strong>: RuboCop linting and documentation with <code>04-quality.yml</code></p>
+<p><strong>📊 Code Quality</strong>: Enforce coding standards, style guides, and generate documentation</p>
 </li><li>
-<p><strong>🏷️ Auto-labeling</strong>: Smart PR/issue labeling with <code>01-intake.yml</code></p>
+<p><strong>🏷️ Auto-labeling</strong>: Automatically categorize and organize issues and pull requests</p>
 </li><li>
-<p><strong>👋 Contributor Welcome</strong>: First-time contributor guidance with <code>01-intake.yml</code></p>
+<p><strong>👋 Contributor Welcome</strong>: Guide first-time contributors and provide context</p>
 </li></ul>
 
 <h3 id="label-F0-9F-93-A6+Phase+3-3A+Dependency+Management+-28Automated-29">📦 <strong>Phase 3: Dependency Management</strong> (Automated)</h3>
 <ul><li>
-<p><strong>🤖 Dependabot Updates</strong>: Weekly dependency update PRs</p>
+<p><strong>🤖 Dependency Updates</strong>: Monitor and update gem dependencies automatically</p>
 </li><li>
-<p><strong>🧪 Update Testing</strong>: Automated testing of dependency changes</p>
+<p><strong>🧪 Update Testing</strong>: Validate compatibility and functionality after updates</p>
 </li><li>
-<p><strong>✅ Safe Auto-merge</strong>: Automatic merging of low-risk updates</p>
+<p><strong>✅ Safe Auto-merge</strong>: Automatically merge low-risk dependency updates</p>
+</li><li>
+<p><strong>📊 Security Auditing</strong>: Scan dependencies for known vulnerabilities</p>
 </li></ul>
 
 <h3 id="label-F0-9F-9A-80+Phase+4-3A+Release+Process+-28On-demand-29">🚀 <strong>Phase 4: Release Process</strong> (On-demand)</h3>
 <ul><li>
-<p><strong>🏗️ Gem Building</strong>: Automated gem packaging with <code>06-release.yml</code></p>
+<p><strong>🏗️ Gem Building</strong>: Package gem files with proper versioning and metadata</p>
 </li><li>
-<p><strong>💎 RubyGems Publishing</strong>: Direct publishing to RubyGems registry</p>
+<p><strong>💎 RubyGems Publishing</strong>: Publish to RubyGems registry with proper validation</p>
 </li><li>
-<p><strong>📝 Changelog Generation</strong>: Automatic changelog and release notes</p>
+<p><strong>📝 Changelog Generation</strong>: Generate release notes and update documentation</p>
 </li><li>
-<p><strong>📢 Release Notifications</strong>: Slack and GitHub release announcements</p>
+<p><strong>📢 Release Notifications</strong>: Announce releases to team and community channels</p>
 </li></ul>
 
 <h3 id="label-F0-9F-94-84+Phase+5-3A+Ongoing+Maintenance+-28Background-29">🔄 <strong>Phase 5: Ongoing Maintenance</strong> (Background)</h3>
 <ul><li>
-<p><strong>🧹 Stale Management</strong>: Automated stale issue cleanup with <code>05-community.yml</code></p>
+<p><strong>🧹 Stale Management</strong>: Clean up inactive issues and pull requests</p>
 </li><li>
-<p><strong>🌐 Ecosystem Monitoring</strong>: Compatibility checks with <code>07-ecosystem.yml</code></p>
+<p><strong>🌐 Ecosystem Monitoring</strong>: Check compatibility with Ruby versions and dependencies</p>
 </li><li>
-<p><strong>📈 Health Monitoring</strong>: Performance tracking with <code>08-monitoring.yml</code></p>
+<p><strong>📈 Health Monitoring</strong>: Track repository activity, performance, and community engagement</p>
 </li><li>
-<p><strong>👥 Community Engagement</strong>: Contributor recognition and community health</p>
+<p><strong>👥 Community Engagement</strong>: Recognize contributors and maintain project health</p>
+</li><li>
+<p><strong>🤖 Interactive Commands</strong>: Provide bot-driven release management and workflow control</p>
 </li></ul>
 
 <h2 id="label-F0-9F-93-9A+Documentation">📚 Documentation</h2>
+
+<p>Complete documentation is available on our <strong>Site[https://patrick204nqh.github.io/gem-ci/]</strong> including:</p>
 <ul><li>
-<p><strong>Lifecycle Diagram[docs/diagrams/ci-workflow-overview.md]</strong> - Visual repository lifecycle and workflow mapping</p>
+<p><strong>🚀 Getting Started</strong>: Setup guides, secrets configuration, and local testing</p>
 </li><li>
-<p><strong>Secrets Setup Guide[docs/SECRETS_SETUP_GUIDE.md]</strong> - Complete secrets configuration</p>
+<p><strong>📊 Workflows</strong>: Complete workflow documentation and architecture overview</p>
 </li><li>
-<p><strong>Manual Testing Guide[docs/MANUAL_WORKFLOW_TESTING.md]</strong> - How to test and trigger workflows manually</p>
+<p><strong>🎯 Advanced Features</strong>: Customization, integrations, and bot commands</p>
 </li><li>
-<p><strong>Labels Color Guide[docs/LABELS_COLOR_GUIDE.md]</strong> - Label design and accessibility</p>
-</li><li>
-<p><strong>Validation Workflows[.github/workflows/tests/README.md]</strong> - Testing your setup</p>
+<p><strong>✅ Validation</strong>: Testing and troubleshooting guides</p>
 </li></ul>
+
+<h3 id="label-F0-9F-A7-AA+Quick+Local+Testing"><strong>🧪 Quick Local Testing</strong></h3>
+
+<pre class="code ruby"><code class="ruby"># Setup (one time)
+cp .secrets.example .secrets &amp;&amp; nano .secrets
+
+# Test workflows locally
+./scripts/test-local              # Test push workflows
+./scripts/test-local ci           # Test CI workflow  
+./scripts/test-workflows          # Run validation tests
+</code></pre>
+
+<p><strong>View Testing Scripts Documentation[scripts/README.md]</strong></p>
 
 <h2 id="label-F0-9F-8E-AF+Key+Features">🎯 Key Features</h2>
 
-<h3 id="label-F0-9F-94-84+Multi-Ruby+Testing"><strong>🔄 Multi-Ruby Testing</strong></h3>
-<ul><li>
-<p>Tests across Ruby 3.2, 3.3 and 3.4</p>
-</li><li>
-<p>Cross-platform support (Ubuntu, macOS)</p>
-</li><li>
-<p>Parallel test execution for speed</p>
-</li></ul>
+<p><strong>🔄 Optimized CI/CD</strong> • <strong>🔒 Comprehensive Security</strong> • <strong>📊 Quality Enforcement</strong> • <strong>🚀 Automated Releases</strong> • <strong>👥 Community Management</strong> • <strong>🏷️ Smart Labeling</strong></p>
 
-<h3 id="label-F0-9F-94-92+Comprehensive+Security"><strong>🔒 Comprehensive Security</strong></h3>
-<ul><li>
-<p>CodeQL static analysis</p>
-</li><li>
-<p>Dependency vulnerability scanning</p>
-</li><li>
-<p>Secret detection in git history</p>
-</li><li>
-<p>Container security scanning</p>
-</li><li>
-<p>Automated security updates</p>
-</li></ul>
+<p>Includes <strong>9 optimized workflows</strong> with 75-80% cost reduction, custom linting, consolidated PR dashboard, automated releases, and comprehensive security scanning.</p>
 
-<h3 id="label-F0-9F-93-8A+Quality+Enforcement"><strong>📊 Quality Enforcement</strong></h3>
-<ul><li>
-<p>RuboCop code style enforcement</p>
-</li><li>
-<p>Test coverage reporting (90% threshold)</p>
-</li><li>
-<p>Documentation coverage checking</p>
-</li><li>
-<p>Markdown and YAML linting</p>
-</li></ul>
-
-<h3 id="label-F0-9F-9A-80+Automated+Releases"><strong>🚀 Automated Releases</strong></h3>
-<ul><li>
-<p>Semantic version bumping</p>
-</li><li>
-<p>Automated changelog generation</p>
-</li><li>
-<p>RubyGems publishing</p>
-</li><li>
-<p>GitHub release creation</p>
-</li><li>
-<p>Slack release notifications</p>
-</li></ul>
-
-<h3 id="label-F0-9F-91-A5+Community+Management"><strong>👥 Community Management</strong></h3>
-<ul><li>
-<p>Welcome messages for new contributors</p>
-</li><li>
-<p>Stale issue/PR management</p>
-</li><li>
-<p>Contributor achievement recognition</p>
-</li><li>
-<p>Community health monitoring</p>
-</li></ul>
-
-<h3 id="label-F0-9F-8F-B7-EF-B8-8F+Smart+Labeling"><strong>🏷️ Smart Labeling</strong></h3>
-<ul><li>
-<p>33 professionally designed labels</p>
-</li><li>
-<p>Automatic labeling based on file changes</p>
-</li><li>
-<p>PR size detection and labeling</p>
-</li><li>
-<p>Accessible color scheme (WCAG AA compliant)</p>
-</li></ul>
+<p><strong>View Complete Feature List[docs/workflows/overview.md]</strong></p>
 
 <h2 id="label-F0-9F-A4-9D+Contributing">🤝 Contributing</h2>
 <ol><li>
@@ -625,7 +693,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Sat Jul 26 19:57:16 2025 by
+  Generated on Sun Jul 27 04:50:22 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
