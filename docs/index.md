@@ -24,37 +24,37 @@ description: The Ultimate Ruby Gem Automation Showcase
 
 ## 🚀 Quick Navigation
 
-<div class="row">
-<div class="col-md-4">
-
-### 🏁 Getting Started
-Set up your repository with our automation workflows
-
-- [🔐 Secrets Setup](setup/secrets)
-- [🏷️ Labels Configuration](setup/labels)  
-- [🧪 Local Testing](guides/local-testing)
-
-</div>
-<div class="col-md-4">
-
-### 📊 Workflows
-Understand our comprehensive automation
-
-- [🔄 Workflow Overview](workflows/overview)
-- [🤖 Bot Commands](guides/bot-commands)
-- [📈 Monitoring](guides/monitoring)
-
-</div>
-<div class="col-md-4">
-
-### 🎯 Advanced
-Customize and extend the workflows
-
-- [🔧 Customization](guides/customization)
-- [🌐 Ecosystem Integration](guides/ecosystem)
-- [✅ Validation](guides/validation)
-
-</div>
+<div class="nav-menu">
+  <div class="row">
+    <div class="col-md-4">
+      <h3>🏁 Getting Started</h3>
+      <p>Set up your repository with our automation workflows</p>
+      <ul>
+        <li><a href="setup/secrets">🔐 Secrets Setup</a></li>
+        <li><a href="setup/github-pages">🌐 GitHub Pages Setup</a></li>
+        <li><a href="guides/local-testing">🧪 Local Testing</a></li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h3>📊 Workflows & Guides</h3>
+      <p>Understand our comprehensive automation</p>
+      <ul>
+        <li><a href="workflows/overview">🔄 Workflow Overview</a></li>
+        <li><a href="guides/gitflow">🔄 GitFlow Guide</a></li>
+        <li><a href="guides/bot-commands">🤖 Bot Commands</a></li>
+        <li><a href="guides/monitoring">📈 Monitoring</a></li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h3>🎯 Advanced Topics</h3>
+      <p>Customize and extend the workflows</p>
+      <ul>
+        <li><a href="guides/customization">🔧 Customization</a></li>
+        <li><a href="guides/ecosystem">🌐 Ecosystem Integration</a></li>
+        <li><a href="guides/validation">✅ Validation</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
 
 ## ✨ What gem-ci Provides
@@ -72,17 +72,22 @@ Customize and extend the workflows
 
 ## 🎯 Key Highlights
 
-> **75-80% cost reduction** • **Consolidated PR dashboard** • **Interactive bot commands** • **Smart caching** • **Automated releases**
-{: .highlight}
+<div class="highlight-box">
+<strong>75-80% cost reduction</strong> • <strong>Consolidated PR dashboard</strong> • <strong>Interactive bot commands</strong> • <strong>Smart caching</strong> • <strong>Automated releases</strong>
+</div>
 
 ## 🚀 Quick Start
 
-<div class="steps">
+<div class="steps" markdown="1">
 
 1. 🎯 **[Use this template](https://github.com/patrick204nqh/gem-ci/generate)** to create your repository
+
 2. 🔐 **[Set up secrets](setup/secrets)** for GitHub App authentication  
-3. 🏷️ **[Configure labels](setup/labels)** and repository settings
+
+3. 🏷️ **Configure labels** and repository settings
+
 4. 🧪 **[Test locally](guides/local-testing)** before going live
+
 5. 🚀 **Start developing** - automation handles the rest!
 
 </div>
@@ -91,7 +96,7 @@ Customize and extend the workflows
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](../CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](../CONTRIBUTORS.md) for details.
 
 **Helpful Links:**
 - 🐛 [Report Issues](https://github.com/patrick204nqh/gem-ci/issues)

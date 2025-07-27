@@ -1,0 +1,77 @@
+<!-- Custom head content for gem-ci documentation -->
+
+<!-- Mermaid.js for diagrams -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#159957',
+      primaryTextColor: '#24292e',
+      primaryBorderColor: '#155799',
+      lineColor: '#586069',
+      secondaryColor: '#f8f9fa',
+      tertiaryColor: '#e1e4e8',
+      background: '#ffffff',
+      mainBkg: '#ffffff',
+      secondBkg: '#f8f9fa',
+      tertiaryBkg: '#e1e4e8'
+    },
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'cardinal'
+    },
+    gitGraph: {
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#159957',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#155799',
+        lineColor: '#586069'
+      }
+    },
+    sequence: {
+      diagramMarginX: 50,
+      diagramMarginY: 10,
+      actorMargin: 50,
+      width: 150,
+      height: 65,
+      boxMargin: 10,
+      boxTextMargin: 5,
+      noteMargin: 10,
+      messageMargin: 35,
+      mirrorActors: true,
+      bottomMarginAdj: 1,
+      useMaxWidth: true,
+      rightAngles: false,
+      showSequenceNumbers: false
+    }
+  });
+</script>
+
+<!-- Custom CSS for better Mermaid integration -->
+<style>
+  .mermaid {
+    text-align: center;
+    margin: 2rem 0;
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Responsive Mermaid diagrams */
+  @media (max-width: 768px) {
+    .mermaid {
+      margin: 1rem 0;
+      padding: 0.5rem;
+    }
+  }
+</style>

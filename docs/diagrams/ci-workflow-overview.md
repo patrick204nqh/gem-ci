@@ -1,4 +1,9 @@
-# 🔄 Ruby Gem Repository Lifecycle
+---
+title: CI Workflow Overview
+description: Visual overview of the complete CI/CD workflow lifecycle for Ruby gem development
+---
+
+# 🔄 CI Workflow Overview
 
 ## Diagram 1: Repository Lifecycle & Tasks
 

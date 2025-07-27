@@ -1,3 +1,8 @@
+---
+title: GitHub Pages Setup
+description: Simple guide to enable GitHub Pages for your gem-ci repository documentation
+---
+
 # GitHub Pages Setup
 
 Simple guide to enable GitHub Pages for your gem-ci repository documentation.

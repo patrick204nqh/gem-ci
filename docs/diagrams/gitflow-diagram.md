@@ -1,10 +1,15 @@
+---
+title: GitFlow Workflow Diagram
+description: Visual representation of the GitFlow branching model used in gem-ci projects
+---
+
 # GitFlow Workflow Diagram
 
 Visual representation of the GitFlow branching model used in gem-ci projects.
 
 ## Branch Flow Diagram
 
-```mermaid
+<div class="mermaid">
 gitGraph
     commit id: "Initial"
     
@@ -53,11 +58,11 @@ gitGraph
     
     checkout develop
     merge hotfix/v1.0.1
-```
+</div>
 
 ## Detailed GitFlow Process
 
-```mermaid
+<div class="mermaid">
 flowchart TD
     A[Start Development] --> B{Feature or Fix?}
     
@@ -111,11 +116,11 @@ flowchart TD
     EE --> A
     FF --> A
     GG --> A
-```
+</div>
 
 ## CI/CD Integration
 
-```mermaid
+<div class="mermaid">
 flowchart LR
     subgraph "Branch Types"
         A[feature/*]
@@ -156,11 +161,11 @@ flowchart LR
     I --> L
     H --> M
     G --> N
-```
+</div>
 
 ## Branch Protection Rules
 
-```mermaid
+<div class="mermaid">
 flowchart TD
     subgraph "master Branch"
         A[🔒 Delete Protection]
@@ -188,11 +193,11 @@ flowchart TD
         N[✅ Full Quality Suite]
         O[👥 PR Review Required]
     end
-```
+</div>
 
 ## Release Automation Flow
 
-```mermaid
+<div class="mermaid">
 sequenceDiagram
     participant Dev as Developer
     participant PR as Pull Request
@@ -217,7 +222,7 @@ sequenceDiagram
     CI->>GH: Create GitHub release
     CI->>RG: Publish to RubyGems
     CI->>SL: Send success notification
-```
+</div>
 
 ## Workflow Triggers Summary
 

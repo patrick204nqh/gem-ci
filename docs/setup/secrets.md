@@ -1,4 +1,10 @@
+---
+title: Secrets Setup Guide
+description: Complete guide for configuring all required secrets for gem-ci workflows
+---
+
 # 🔐 Secrets Setup Guide
+
 *Complete guide for configuring all required secrets for gem-ci workflows*
 
 ## 🎯 Overview

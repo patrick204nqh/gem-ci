@@ -232,7 +232,7 @@ gem-ci includes **9 comprehensive workflows** that provide complete automation f
 
 ## 🔗 Workflow Dependencies
 
-```mermaid
+<div class="mermaid">
 graph TD
     A[GitHub App Token] --> B[01-Intake]
     A --> C[03-Security]
@@ -247,7 +247,7 @@ graph TD
     K[02-CI Results] --> L[PR Dashboard]
     M[03-Security Results] --> L
     N[04-Quality Results] --> L
-```
+</div>
 
 ## 📊 Shared Actions
 

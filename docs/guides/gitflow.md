@@ -1,3 +1,8 @@
+---
+title: GitFlow Guide
+description: Git workflow and branching strategy for gem-ci projects
+---
+
 # GitFlow Guide for gem-ci
 
 This guide explains the Git workflow and branching strategy used in gem-ci projects.
@@ -6,7 +11,7 @@ This guide explains the Git workflow and branching strategy used in gem-ci proje
 
 gem-ci follows a simplified GitFlow model optimized for Ruby gem development with automated CI/CD integration.
 
-📊 **Visual Guide**: See the [GitFlow Diagram](../diagrams/gitflow-diagram.md) for a visual representation of this workflow.
+📊 **Visual Guide**: See the [GitFlow Diagram]({{ site.baseurl }}/diagrams/gitflow-diagram) for a visual representation of this workflow.
 
 ## Branch Structure
 

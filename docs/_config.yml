@@ -5,10 +5,47 @@ baseurl: "/gem-ci"
 
 theme: jekyll-theme-cayman
 
+# Enhanced navigation
+navigation:
+  - title: "🏁 Setup"
+    url: "/setup/"
+    children:
+      - title: "🔐 Secrets Setup"
+        url: "/setup/secrets"
+      - title: "🌐 GitHub Pages"
+        url: "/setup/github-pages"
+  
+  - title: "📚 Guides"
+    url: "/guides/"
+    children:
+      - title: "🧪 Local Testing"
+        url: "/guides/local-testing"
+      - title: "🔄 GitFlow"
+        url: "/guides/gitflow"
+      - title: "🤖 Bot Commands"
+        url: "/guides/bot-commands"
+      - title: "📈 Monitoring"
+        url: "/guides/monitoring"
+      - title: "🔧 Customization"
+        url: "/guides/customization"
+      - title: "🌐 Ecosystem"
+        url: "/guides/ecosystem"
+      - title: "✅ Validation"
+        url: "/guides/validation"
+  
+  - title: "🔄 Workflows"
+    url: "/workflows/"
+    children:
+      - title: "📊 Overview"
+        url: "/workflows/overview"
+
 # Theme customization
-cayman:
-  github_repository_url: "https://github.com/patrick204nqh/gem-ci"
-  show_downloads: true
+github:
+  repository_url: "https://github.com/patrick204nqh/gem-ci"
+  zip_url: "https://github.com/patrick204nqh/gem-ci/zipball/main"
+  tar_url: "https://github.com/patrick204nqh/gem-ci/tarball/main"
+  
+show_downloads: true
 
 markdown: kramdown
 highlighter: rouge
@@ -18,6 +55,15 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+
+# Enable Mermaid diagrams
+mermaid: true
 
 header_pages:
   - setup/secrets.md
