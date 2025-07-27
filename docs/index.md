@@ -8,7 +8,7 @@ description: The Ultimate Ruby Gem Automation Showcase
 
 # 🏆 gem-ci Documentation
 
-![gem-ci Logo](../public/gem-ci-transparent-bg.png)
+<img src="../public/gem-ci-transparent-bg.png" alt="gem-ci Logo" width="200">
 
 **The Ultimate Ruby Gem Automation Showcase**
 
@@ -52,37 +52,18 @@ description: The Ultimate Ruby Gem Automation Showcase
 
 ## ✨ What gem-ci Provides
 
-This repository showcases **9 comprehensive workflows** that handle every aspect of your Ruby gem's lifecycle:
+**9 comprehensive workflows** for complete Ruby gem automation:
 
-- 🔄 **Automated CI/CD** with consolidated PR status dashboard
-- 🔒 **Security scanning** and vulnerability detection  
-- 📊 **Code quality** enforcement with focused linting
-- 🚀 **Automated releases** with semantic versioning
-- 👥 **Community management** and contributor engagement
-- 📈 **Performance monitoring** and ecosystem health
-- 🤖 **Bot commands** for interactive workflow management
-- 🌐 **Ecosystem integration** and compatibility checks
-- 📊 **Advanced monitoring** with cost-optimized scheduling
+- 🔄 **CI/CD** with consolidated PR dashboard
+- 🔒 **Security** scanning and vulnerability detection  
+- 📊 **Quality** enforcement and documentation
+- 🚀 **Releases** with semantic versioning
+- 👥 **Community** management and engagement
+- 🤖 **Bot commands** for workflow control
 
 ## 🎯 Key Highlights
 
-### **💰 Cost Optimized**
-- Ruby 3.3 only (instead of multiple versions)
-- Ubuntu runners only (instead of cross-platform)
-- Reduced scheduled workflow frequency
-- **~75-80% cost reduction** compared to typical setups
-
-### **🚀 Performance Focused**
-- Consolidated PR status dashboard (no comment spam)
-- Focused custom linting (replacing slow super-linter)
-- Parallel job execution
-- Smart caching strategies
-
-### **🤖 Interactive Automation**
-- Slash commands for release management
-- Bot-driven workflow interactions
-- Automated community engagement
-- Smart notification systems
+**75-80% cost reduction** • **Consolidated PR dashboard** • **Interactive bot commands** • **Smart caching** • **Automated releases**
 
 ## 🚀 Quick Start
 
@@ -103,8 +84,6 @@ This project is licensed under the MIT License - see the [LICENSE](../LICENSE.tx
 ---
 
 <div align="center">
-
-**Built with ❤️ for the Ruby community**
 
 [![GitHub](https://img.shields.io/badge/GitHub-patrick204nqh%2Fgem--ci-blue?style=flat-square&logo=github)](https://github.com/patrick204nqh/gem-ci)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](../LICENSE.txt)

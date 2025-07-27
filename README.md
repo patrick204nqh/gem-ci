@@ -2,7 +2,7 @@
 
 # 🏆 gem-ci
 
-![gem-ci Logo](public/gem-ci-transparent-bg.png)
+<img src="public/gem-ci-transparent-bg.png" alt="gem-ci Logo" width="200">
 
 **The Ultimate Ruby Gem Automation Showcase**
 
@@ -21,17 +21,14 @@
 
 ## ✨ What This Provides
 
-This repository serves as the **ultimate showcase** for Ruby gem automation. It includes **9 comprehensive workflows** that handle every aspect of your gem's lifecycle:
+**9 comprehensive workflows** for complete Ruby gem automation:
 
-- 🔄 **Automated CI/CD** with consolidated PR status dashboard
-- 🔒 **Security scanning** and vulnerability detection  
-- 📊 **Code quality** enforcement with focused linting
-- 🚀 **Automated releases** with semantic versioning
-- 👥 **Community management** and contributor engagement
-- 📈 **Performance monitoring** and ecosystem health
-- 🤖 **Bot commands** for interactive workflow management
-- 🌐 **Ecosystem integration** and compatibility checks
-- 📊 **Advanced monitoring** with cost-optimized scheduling
+- 🔄 **CI/CD** with consolidated PR dashboard
+- 🔒 **Security** scanning and vulnerability detection  
+- 📊 **Quality** enforcement and documentation
+- 🚀 **Releases** with semantic versioning
+- 👥 **Community** management and engagement
+- 🤖 **Bot commands** for workflow control
 
 ## 🚀 Quick Start
 
@@ -42,55 +39,6 @@ This repository serves as the **ultimate showcase** for Ruby gem automation. It 
 5. **Test locally** using our [Local Testing Guide](docs/guides/local-testing.md)
 6. **Start developing** - automation handles the rest!
 
-## 📋 Complete Automation Tasks
-
-| **Category**        | **Task**                | **Workflow**                             | **Action Used**                           | **Configuration**           |
-| ------------------- | ----------------------- | ---------------------------------------- | ----------------------------------------- | --------------------------- |
-| **🔄 CI/CD**         | Ruby testing            | `02-ci.yml`                              | `ruby/setup-ruby@v1`                      | Ruby 3.3 (optimized)       |
-|                     | Ubuntu testing          | `02-ci.yml`                              | `actions/checkout@v4`                     | Ubuntu-latest (cost optimized) |
-|                     | Dependency caching      | `02-ci.yml`                              | `actions/cache@v3`                        | Bundler cache               |
-|                     | Test execution          | `02-ci.yml`                              | Custom scripts                            | RSpec, Minitest             |
-|                     | Coverage reporting      | `04-quality.yml`                         | `simplecov` gem                           | 90% threshold               |
-| **🔒 Security**      | CodeQL analysis         | `03-security.yml`                        | `github/codeql-action@v3`                 | `.github/config/codeql.yml` |
-|                     | Dependency scanning     | `03-security.yml`                        | `actions/dependency-review-action@v4`     | Vulnerability detection     |
-|                     | Secret scanning         | `03-security.yml`                        | `trufflesecurity/trufflehog@main`         | Git history scan            |
-|                     | Container scanning      | `03-security.yml`                        | `aquasecurity/trivy-action@master`        | Dockerfile security         |
-|                     | Bundle audit            | `03-security.yml`                        | `bundler-audit` gem                       | Gem vulnerabilities         |
-| **📊 Quality**       | Code linting            | `04-quality.yml`                         | `rubocop/rubocop-github-action@v0.1.0`    | RuboCop standards           |
-|                     | Documentation           | `04-quality.yml`                         | `yard` gem                                | API documentation           |
-|                     | Markdown linting        | `04-quality.yml`                         | `DavidAnson/markdownlint-cli2-action@v16` | Markdown standards          |
-|                     | Super linting           | `04-quality.yml`                         | `super-linter/super-linter@v5`            | Multi-language linting      |
-| **🏷️ Labels**        | Label sync              | `01-intake.yml`                          | `crazy-max/ghaction-github-labeler@v5`    | `.github/config/labels.yml` |
-|                     | Auto-labeling           | `01-intake.yml`                          | `actions/labeler@v5`                      | `.github/config/labeler.yml` |
-|                     | Size labeling           | `01-intake.yml`                          | Custom script                             | PR size detection           |
-| **👥 Community**     | Welcome messages        | `01-intake.yml`                          | `actions/first-interaction@v1`            | First-time contributors     |
-|                     | Stale management        | `05-community.yml`                       | `actions/stale@v9`                        | 60-day stale policy         |
-|                     | Contributor recognition | `05-community.yml`                       | Custom script                             | Achievement badges          |
-|                     | Health monitoring       | `08-monitoring.yml`                      | Custom script                             | Community metrics           |
-| **🚀 Release**       | Semantic versioning     | `06-release.yml`                         | Custom script                             | Version bumping             |
-|                     | Changelog generation    | `06-release.yml`                         | Custom script                             | Auto-generated changelogs   |
-|                     | RubyGems publishing     | `06-release.yml`                         | `ruby/setup-ruby@v1`                      | Automated gem push          |
-|                     | GitHub releases         | `06-release.yml`                         | `actions/create-release@v1`               | Release notes               |
-|                     | Release notifications   | `06-release.yml`                         | `slackapi/slack-github-action@v1.27.0`    | Slack integration           |
-| **📦 Dependencies**  | Dependency updates      | Dependabot                               | GitHub native                             | `.github/dependabot.yml`    |
-|                     | Security updates        | Dependabot                               | GitHub native                             | Auto-merge safe updates     |
-|                     | Version grouping        | Dependabot                               | GitHub native                             | Development/testing groups  |
-| **🛡️ Protection**    | Branch protection       | Rulesets                                 | GitHub native                             | `.github/config/rulesets/`  |
-|                     | Tag protection          | Rulesets                                 | GitHub native                             | Release tag protection      |
-|                     | Push restrictions       | Rulesets                                 | GitHub native                             | Development branch rules    |
-| **📢 Notifications** | Slack integration       | Multiple                                 | Custom shared action                      | `SLACK_BOT_TOKEN` + `SLACK_CHANNEL_ID` |
-|                     | PR Status Dashboard     | Multiple                                 | `update-pr-status` action                 | Consolidated PR comments    |
-| **🤖 Bot Commands**  | Release management      | `09-bot-commands.yml`                    | `actions/github-script@v7`               | Slash commands              |
-|                     | Help system             | `09-bot-commands.yml`                    | `actions/github-script@v7`               | Interactive help            |
-| **🌐 Ecosystem**     | Dependency health       | `07-ecosystem.yml`                       | Custom scripts                            | Bi-weekly checks            |
-|                     | Compatibility matrix   | `07-ecosystem.yml`                       | `ruby/setup-ruby@v1`                      | Ruby version testing        |
-|                     | Performance benchmarks | `07-ecosystem.yml`                       | Custom benchmark scripts                 | Release validation          |
-| **📊 Monitoring**    | Workflow metrics        | `08-monitoring.yml`                      | `actions/github-script@v7`               | Weekly performance tracking |
-|                     | Repository health       | `08-monitoring.yml`                      | Custom health checks                      | Automated health reports    |
-| **🧪 Validation**    | GitHub App setup        | `tests/validate-github-app.yml`          | `actions/create-github-app-token@v1`      | Token validation            |
-|                     | Slack integration       | `tests/validate-slack-integration.yml`   | `slackapi/slack-github-action@v1.27.0`    | Message testing             |
-|                     | Label sync              | `tests/validate-labels-sync.yml`         | `crazy-max/ghaction-github-labeler@v5`    | Configuration validation    |
-|                     | Repository rulesets     | `tests/validate-repository-rulesets.yml` | Custom scripts                            | Ruleset validation          |
 
 ## 🔐 Required Setup
 
@@ -128,41 +76,6 @@ This repository serves as the **ultimate showcase** for Ruby gem automation. It 
 **Usage**: Comment these commands on any issue or PR to trigger bot actions.
 </details>
 
-## 🔄 Ruby Gem Repository Lifecycle
-
-This template provides a complete automation solution that follows the natural lifecycle of a Ruby gem repository:
-
-### 🚀 **Phase 1: Repository Setup** (One-time)
-- **🏷️ Label Management**: Sync professional labels and organize repository structure
-- **🔐 Secret Configuration**: Setup GitHub App authentication and integrations
-- **🛡️ Branch Protection**: Configure repository rulesets and security policies
-- **⚙️ Initial Configuration**: Setup dependency management, security scanning, and automation workflows
-
-### 💻 **Phase 2: Development Cycle** (Daily)
-- **🧪 Continuous Testing**: Run comprehensive test suites and validate gem functionality
-- **🔒 Security Scanning**: Detect vulnerabilities in code and dependencies
-- **📊 Code Quality**: Enforce coding standards, style guides, and generate documentation
-- **🏷️ Auto-labeling**: Automatically categorize and organize issues and pull requests
-- **👋 Contributor Welcome**: Guide first-time contributors and provide context
-
-### 📦 **Phase 3: Dependency Management** (Automated)
-- **🤖 Dependency Updates**: Monitor and update gem dependencies automatically
-- **🧪 Update Testing**: Validate compatibility and functionality after updates
-- **✅ Safe Auto-merge**: Automatically merge low-risk dependency updates
-- **📊 Security Auditing**: Scan dependencies for known vulnerabilities
-
-### 🚀 **Phase 4: Release Process** (On-demand)
-- **🏗️ Gem Building**: Package gem files with proper versioning and metadata
-- **💎 RubyGems Publishing**: Publish to RubyGems registry with proper validation
-- **📝 Changelog Generation**: Generate release notes and update documentation
-- **📢 Release Notifications**: Announce releases to team and community channels
-
-### 🔄 **Phase 5: Ongoing Maintenance** (Background)
-- **🧹 Stale Management**: Clean up inactive issues and pull requests
-- **🌐 Ecosystem Monitoring**: Check compatibility with Ruby versions and dependencies
-- **📈 Health Monitoring**: Track repository activity, performance, and community engagement
-- **👥 Community Engagement**: Recognize contributors and maintain project health
-- **🤖 Interactive Commands**: Provide bot-driven release management and workflow control
 
 ## 📚 Documentation
 
@@ -189,11 +102,7 @@ cp .secrets.example .secrets && nano .secrets
 
 ## 🎯 Key Features
 
-**🔄 Optimized CI/CD** • **🔒 Comprehensive Security** • **📊 Quality Enforcement** • **🚀 Automated Releases** • **👥 Community Management** • **🏷️ Smart Labeling**
-
-Includes **9 optimized workflows** with 75-80% cost reduction, custom linting, consolidated PR dashboard, automated releases, and comprehensive security scanning.
-
-**[📖 View Complete Feature List](docs/workflows/overview.md)**
+**75-80% cost reduction** • **Consolidated PR dashboard** • **Interactive bot commands** • **Comprehensive security** • **Automated releases**
 
 ## 🤝 Contributing
 
