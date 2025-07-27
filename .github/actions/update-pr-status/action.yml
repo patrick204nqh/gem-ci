@@ -1,0 +1,125 @@
+name: Update PR Status Comment
+description: 'Update consolidated PR status comment with workflow results'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API calls'
+    required: true
+  workflow-name:
+    description: 'Name of the workflow (CI, Security, Quality)'
+    required: true
+  status:
+    description: 'Status (success, failure, warning, running)'
+    required: true
+  summary:
+    description: 'Brief summary of results'
+    required: true
+  details-url:
+    description: 'URL to detailed results'
+    required: false
+  run-id:
+    description: 'GitHub Actions run ID'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: 📊 Update PR Status Comment
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          if (context.eventName !== 'pull_request') {
+            console.log('Not a pull request, skipping comment update');
+            return;
+          }
+          
+          const workflowName = '${{ inputs.workflow-name }}';
+          const status = '${{ inputs.status }}';
+          const summary = '${{ inputs.summary }}';
+          const detailsUrl = '${{ inputs.details-url }}';
+          const runId = '${{ inputs.run-id }}' || context.runId;
+          
+          // Generate status emoji
+          const statusEmoji = {
+            success: '✅',
+            failure: '❌', 
+            warning: '⚠️',
+            running: '🔄'
+          }[status] || '❓';
+          
+          // Build workflow section
+          const workflowSection = `### ${statusEmoji} ${workflowName}
+          **Status**: ${status}
+          **Summary**: ${summary}
+          ${detailsUrl ? `**Details**: [View Results](${detailsUrl})` : `**Details**: [View Run](${context.payload.repository.html_url}/actions/runs/${runId})`}`;
+          
+          try {
+            // Get existing comments
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            // Find existing consolidated status comment
+            const existingComment = comments.find(comment => 
+              comment.body.includes('🚀 PR Status Dashboard') && 
+              comment.user.type === 'Bot'
+            );
+            
+            let commentBody;
+            
+            if (existingComment) {
+              // Update existing comment
+              let updatedBody = existingComment.body;
+              
+              // Replace existing workflow section or add new one
+              const workflowRegex = new RegExp(`### [✅❌⚠️🔄❓] ${workflowName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?(?=###|---|$)`, 'g');
+              
+              if (updatedBody.includes(workflowName)) {
+                updatedBody = updatedBody.replace(workflowRegex, workflowSection + '\n\n');
+              } else {
+                // Add new workflow section before footer
+                const footerIndex = updatedBody.indexOf('---\n*Status updated automatically*');
+                if (footerIndex !== -1) {
+                  updatedBody = updatedBody.substring(0, footerIndex) + workflowSection + '\n\n' + updatedBody.substring(footerIndex);
+                } else {
+                  updatedBody += '\n\n' + workflowSection;
+                }
+              }
+              
+              commentBody = updatedBody;
+              
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: commentBody
+              });
+              
+              console.log(`Updated existing PR status comment with ${workflowName} results`);
+              
+            } else {
+              // Create new consolidated comment
+              commentBody = `## 🚀 PR Status Dashboard
+              
+              ${workflowSection}
+              
+              ---
+              *Status updated automatically*`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+              
+              console.log(`Created new PR status comment with ${workflowName} results`);
+            }
+            
+          } catch (error) {
+            console.error('Error updating PR status comment:', error);
+            throw error;
+          }

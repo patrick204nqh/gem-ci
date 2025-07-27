@@ -105,54 +105,22 @@ jobs:
           bundle exec rubocop --format github --format json --out rubocop-results.json
         continue-on-error: true
 
-      - name: 📊 RuboCop Report
-        uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
+      - name: 📊 Store RuboCop Results  
+        run: |
+          # Store results for consolidated report
+          mkdir -p /tmp/quality-reports
+          if [ -f rubocop-results.json ]; then
+            cp rubocop-results.json /tmp/quality-reports/
+          else
+            echo '{"files":[],"summary":{"inspected_file_count":0,"offense_count":0,"target_ruby_version":"3.3"}}' > /tmp/quality-reports/rubocop-results.json
+          fi
+          
+      - name: 📤 Upload RuboCop Results
+        uses: actions/upload-artifact@v4
         with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          script: |
-            const fs = require('fs');
-            
-            try {
-              const results = JSON.parse(fs.readFileSync('rubocop-results.json', 'utf8'));
-              const { files, summary } = results;
-              
-              let reportBody = `## 💎 RuboCop Analysis Results\n\n`;
-              reportBody += `**Files Inspected**: ${summary.inspected_file_count}\n`;
-              reportBody += `**Offenses**: ${summary.offense_count}\n`;
-              reportBody += `**Target Version**: ${summary.target_ruby_version}\n\n`;
-              
-              if (summary.offense_count === 0) {
-                reportBody += `🎉 **Excellent!** No RuboCop offenses found.\n`;
-              } else {
-                reportBody += `### 📋 Issues Found\n\n`;
-                
-                const issueFiles = files.filter(file => file.offenses.length > 0);
-                issueFiles.slice(0, 5).forEach(file => {
-                  reportBody += `**📄 ${file.path}**\n`;
-                  file.offenses.slice(0, 3).forEach(offense => {
-                    reportBody += `- Line ${offense.location.start_line}: ${offense.message} (${offense.cop_name})\n`;
-                  });
-                  if (file.offenses.length > 3) {
-                    reportBody += `- ... and ${file.offenses.length - 3} more issues\n`;
-                  }
-                  reportBody += `\n`;
-                });
-                
-                if (issueFiles.length > 5) {
-                  reportBody += `... and ${issueFiles.length - 5} more files with issues\n\n`;
-                }
-              }
-              
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: reportBody
-              });
-            } catch (error) {
-              console.log('Could not parse RuboCop results:', error.message);
-            }
+          name: rubocop-results
+          path: /tmp/quality-reports/rubocop-results.json
+          retention-days: 1
 
   documentation:
     name: 📚 Documentation Generation
@@ -273,26 +241,12 @@ jobs:
             echo "No Ruby files found for analysis." >> complexity-report.md
           fi
 
-      - name: 📝 Comment complexity analysis
-        uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
+      - name: 📤 Upload Complexity Results
+        uses: actions/upload-artifact@v4
         with:
-          github-token: ${{ steps.app_token.outputs.token }}
-          script: |
-            const fs = require('fs');
-            
-            try {
-              const report = fs.readFileSync('complexity-report.md', 'utf8');
-              
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: report
-              });
-            } catch (error) {
-              console.log('Could not read complexity report:', error.message);
-            }
+          name: complexity-results
+          path: complexity-report.md
+          retention-days: 1
 
   quality-summary:
     name: 📋 Quality Gate Summary
@@ -323,7 +277,30 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
 
-      - name: 📊 Quality Gate Results
+      - name: 📥 Download Quality Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: rubocop-results
+          path: ./reports/
+        continue-on-error: true
+        
+      - name: 📥 Download Complexity Report  
+        uses: actions/download-artifact@v4
+        with:
+          name: complexity-results
+          path: ./reports/
+        continue-on-error: true
+
+      - name: 📊 Update PR Status
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/update-pr-status
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          workflow-name: "Quality Gate"
+          status: ${{ (needs.linting.result == 'success' && needs.rubocop.result == 'success' && needs.documentation.result == 'success' && needs.complexity-analysis.result == 'success') && 'success' || 'failure' }}
+          summary: ${{ (needs.linting.result == 'success' && needs.rubocop.result == 'success' && needs.documentation.result == 'success' && needs.complexity-analysis.result == 'success') && 'All quality checks passed (4/4)' || 'Some quality checks failed' }}
+
+      - name: 📊 Quality Gate Results (Internal)
         uses: actions/github-script@v7
         with:
           github-token: ${{ steps.app_token.outputs.token }}
@@ -338,37 +315,12 @@ jobs:
             const passed = jobs.filter(job => job.result === 'success').length;
             const failed = jobs.filter(job => job.result === 'failure').length;
             const total = jobs.length;
-            
             const qualityGatePassed = failed === 0;
             
-            const summary = `## 🏆 Quality Gate Results
-            
-            **Status**: ${qualityGatePassed ? '✅ PASSED' : '❌ FAILED'}
-            **Quality Score**: ${passed}/${total} checks passed
-            
-            ### 📊 Individual Results
-            ${jobs.map(job => {
-              const emoji = job.result === 'success' ? '✅' : 
-                           job.result === 'failure' ? '❌' : '⏸️';
-              return `- ${emoji} **${job.name}**: ${job.result}`;
-            }).join('\n')}
-            
-            ${qualityGatePassed ? 
-              '🎉 **Excellent work!** All quality checks passed.' : 
-              '⚠️ **Action needed**: Please address the failing quality checks above.'
-            }
-            `;
-            
-            if (context.eventName === 'pull_request') {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: summary
-              });
-            }
-            
-            console.log(summary);
+            console.log(`Quality Gate Results: ${passed}/${total} checks passed`);
+            jobs.forEach(job => {
+              console.log(`- ${job.name}: ${job.result}`);
+            });
             
             // Set output for other workflows
             core.setOutput('quality-gate-passed', qualityGatePassed);

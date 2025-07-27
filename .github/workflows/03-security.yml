@@ -161,6 +161,15 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
 
+      - name: 📊 Update PR Status  
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/update-pr-status
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          workflow-name: "Security Scan"
+          status: ${{ (needs.codeql-analysis.result == 'success' && needs.vulnerability-scan.result == 'success' && needs.secret-scan.result == 'success') && 'success' || 'failure' }}
+          summary: ${{ (needs.codeql-analysis.result == 'success' && needs.vulnerability-scan.result == 'success' && needs.secret-scan.result == 'success') && 'All security scans passed' || 'Some security checks failed' }}
+
       - name: 📊 Security Scan Summary
         uses: actions/github-script@v7
         with:
@@ -192,13 +201,7 @@ jobs:
             ${failed > 0 ? '⚠️ **Action Required**: Please review the failed security checks above.' : '🎉 **Great job!** All security scans passed successfully.'}
             `;
             
-            if (context.eventName === 'pull_request') {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: summary
-              });
-            }
+            // Use shared PR status comment instead
+            console.log('Security results will be added to consolidated PR status comment');
             
             console.log(summary);
