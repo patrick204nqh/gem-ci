@@ -4,51 +4,37 @@ title: gem-ci Documentation
 description: The Ultimate Ruby Gem Automation Showcase
 ---
 
-<div align="center">
-
+{: .text-center}
 # 🏆 gem-ci Documentation
 
-<img src="../public/gem-ci-transparent-bg.png" alt="gem-ci Logo" width="200">
+{: .text-center}
+![gem-ci Logo]({{ site.baseurl }}/assets/images/gem-ci-transparent-bg.png){: width="200"}
 
+{: .text-center}
 **The Ultimate Ruby Gem Automation Showcase**
 
+{: .text-center}
 *Battle-tested GitHub Actions workflows with comprehensive CI/CD, security, and community management*
-
-</div>
 
 ## 🚀 Quick Navigation
 
-<div class="grid">
-  <div class="card">
-    <h3>🏁 Getting Started</h3>
-    <p>Set up your repository with our automation workflows</p>
-    <ul>
-      <li><a href="setup/secrets">🔐 Secrets Setup</a></li>
-      <li><a href="setup/labels">🏷️ Labels Configuration</a></li>
-      <li><a href="guides/local-testing">🧪 Local Testing</a></li>
-    </ul>
-  </div>
-  
-  <div class="card">
-    <h3>📊 Workflows</h3>
-    <p>Understand our comprehensive automation</p>
-    <ul>
-      <li><a href="workflows/overview">🔄 Workflow Overview</a></li>
-      <li><a href="guides/bot-commands">🤖 Bot Commands</a></li>
-      <li><a href="guides/monitoring">📈 Monitoring</a></li>
-    </ul>
-  </div>
-  
-  <div class="card">
-    <h3>🎯 Advanced</h3>
-    <p>Customize and extend the workflows</p>
-    <ul>
-      <li><a href="guides/customization">🔧 Customization</a></li>
-      <li><a href="guides/ecosystem">🌐 Ecosystem Integration</a></li>
-      <li><a href="guides/validation">✅ Validation</a></li>
-    </ul>
-  </div>
-</div>
+### 🏁 Getting Started
+Set up your repository with our automation workflows
+- [🔐 Secrets Setup](setup/secrets)
+- [🏷️ Labels Configuration](setup/labels)  
+- [🧪 Local Testing](guides/local-testing)
+
+### 📊 Workflows
+Understand our comprehensive automation
+- [🔄 Workflow Overview](workflows/overview)
+- [🤖 Bot Commands](guides/bot-commands)
+- [📈 Monitoring](guides/monitoring)
+
+### 🎯 Advanced
+Customize and extend the workflows
+- [🔧 Customization](guides/customization)
+- [🌐 Ecosystem Integration](guides/ecosystem)
+- [✅ Validation](guides/validation)
 
 ## ✨ What gem-ci Provides
 
@@ -83,9 +69,6 @@ This project is licensed under the MIT License - see the [LICENSE](../LICENSE.tx
 
 ---
 
-<div align="center">
-
+{: .text-center}
 [![GitHub](https://img.shields.io/badge/GitHub-patrick204nqh%2Fgem--ci-blue?style=flat-square&logo=github)](https://github.com/patrick204nqh/gem-ci)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](../LICENSE.txt)
-
-</div>
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)]({{ site.baseurl }}/LICENSE.txt)
