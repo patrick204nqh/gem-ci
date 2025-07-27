@@ -21,7 +21,7 @@
       "parameters": {
         "required_status_checks": [
           {
-            "context": "Test Ruby 3.2 on ubuntu-latest",
+            "context": "Test Ruby 3.3 on ubuntu-latest",
             "integration_id": null
           },
           {
