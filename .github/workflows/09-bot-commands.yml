@@ -7,9 +7,10 @@
 
 name: 09 - Bot Commands
 
-on:
-  issue_comment:
-    types: [created]
+# Disabled bot commands
+# on:
+#   issue_comment:
+#     types: [created]
 
 env:
   RUBY_VERSION: "3.3"

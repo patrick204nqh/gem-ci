@@ -12,6 +12,9 @@ on:
     types: [opened, edited, reopened]
   pull_request:
     types: [opened, edited, reopened, synchronize]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
   push:
     paths: ['.github/config/labels.yml']
 
