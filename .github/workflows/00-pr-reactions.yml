@@ -1,0 +1,95 @@
+# 📋 Workflow: PR Reactions & Celebrations
+# 🎯 Purpose: Add rocket reactions when checks pass
+# 🔄 Triggers: After CI, Security, and Quality workflows complete
+# 📦 Outputs: GitHub reactions
+# ⏱️ Duration: ~30 seconds
+# 🔗 Dependencies: GitHub App token
+
+name: 00 - PR Reactions
+
+on:
+  workflow_run:
+    workflows: ["02 - CI", "03 - Security", "04 - Quality"]
+    types: [completed]
+
+env:
+  RUBY_VERSION: "3.3"
+
+jobs:
+  all-checks-passed:
+    name: 🚀 All Checks Passed Reaction
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔑 Generate GitHub App Token
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: 🔍 Check if all workflows passed
+        id: check_workflows
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          script: |
+            const workflowRun = context.payload.workflow_run;
+            const headSha = workflowRun.head_sha;
+            const prNumber = workflowRun.pull_requests[0]?.number;
+            
+            if (!prNumber) {
+              console.log('No PR number found, skipping reaction');
+              core.setOutput('add_reaction', 'false');
+              return;
+            }
+            
+            console.log(`Checking workflows for PR #${prNumber}, SHA: ${headSha}`);
+            
+            // Get all workflow runs for this SHA
+            const { data: workflowRuns } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: headSha,
+              status: 'completed'
+            });
+            
+            // Find the three main workflows
+            const mainWorkflows = ['02 - CI', '03 - Security', '04 - Quality'];
+            const workflowResults = {};
+            
+            for (const run of workflowRuns.workflow_runs) {
+              if (mainWorkflows.includes(run.name)) {
+                workflowResults[run.name] = run.conclusion;
+                console.log(`${run.name}: ${run.conclusion}`);
+              }
+            }
+            
+            // Check if all three workflows passed
+            const allPassed = mainWorkflows.every(workflow => 
+              workflowResults[workflow] === 'success'
+            );
+            
+            console.log(`All main workflows passed: ${allPassed}`);
+            
+            core.setOutput('add_reaction', allPassed ? 'true' : 'false');
+            core.setOutput('pr_number', prNumber);
+
+      - name: 🚀 Add rocket reaction to PR
+        if: steps.check_workflows.outputs.add_reaction == 'true'
+        uses: ./.github/actions/add-reaction
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          reaction-type: 'rocket'
+          target-type: 'pr'
+          pr-number: ${{ steps.check_workflows.outputs.pr_number }}

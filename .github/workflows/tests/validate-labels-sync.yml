@@ -24,17 +24,17 @@ jobs:
         run: |
           echo "🧪 Checking for labels configuration..."
           
-          if [ -f ".github/labels.yml" ]; then
+          if [ -f ".github/config/labels.yml" ]; then
             echo "✅ Found labels.yml configuration"
-            echo "📄 File size: $(wc -c < .github/labels.yml) bytes"
-            echo "📋 Label count: $(yq eval '. | length' .github/labels.yml)"
+            echo "📄 File size: $(wc -c < .github/config/labels.yml) bytes"
+            echo "📋 Label count: $(yq eval '. | length' .github/config/labels.yml)"
           elif [ -f ".github/config/labels.json" ]; then
             echo "✅ Found labels.json configuration"
             echo "📄 File size: $(wc -c < .github/config/labels.json) bytes"
             echo "📋 Label count: $(jq '. | length' .github/config/labels.json)"
           else
             echo "❌ No labels configuration found!"
-            echo "💡 Expected: .github/labels.yml (preferred) or .github/config/labels.json"
+            echo "💡 Expected: .github/config/labels.yml (preferred) or .github/config/labels.json"
             exit 1
           fi
       
@@ -42,9 +42,9 @@ jobs:
         run: |
           echo "🧪 Validating label structure..."
           
-          if [ -f ".github/labels.yml" ]; then
+          if [ -f ".github/config/labels.yml" ]; then
             # Validate YAML structure
-            if yq eval '.' .github/labels.yml > /dev/null 2>&1; then
+            if yq eval '.' .github/config/labels.yml > /dev/null 2>&1; then
               echo "✅ Valid YAML syntax"
             else
               echo "❌ Invalid YAML syntax"
@@ -54,7 +54,7 @@ jobs:
             # Check required fields
             required_fields=("name" "color" "description")
             for field in "${required_fields[@]}"; do
-              if yq eval ".[0] | has(\"$field\")" .github/labels.yml > /dev/null 2>&1; then
+              if yq eval ".[0] | has(\"$field\")" .github/config/labels.yml > /dev/null 2>&1; then
                 echo "✅ Required field '$field' present"
               else
                 echo "❌ Missing required field: $field"
@@ -64,7 +64,7 @@ jobs:
             
             # Show sample labels
             echo "📋 Sample labels:"
-            yq eval '.[] | "  🏷️  " + .name + " (" + .color + ") - " + .description' .github/labels.yml | head -5
+            yq eval '.[] | "  🏷️  " + .name + " (" + .color + ") - " + .description' .github/config/labels.yml | head -5
             
           elif [ -f ".github/config/labels.json" ]; then
             # Validate JSON structure
@@ -95,9 +95,9 @@ jobs:
         run: |
           echo "🧪 Validating label color scheme..."
           
-          if [ -f ".github/labels.yml" ]; then
+          if [ -f ".github/config/labels.yml" ]; then
             # Check for valid hex colors
-            invalid_colors=$(yq eval '.[] | select(.color | test("^[0-9a-fA-F]{6}$") | not) | .name + ": " + .color' .github/labels.yml)
+            invalid_colors=$(yq eval '.[] | select(.color | test("^[0-9a-fA-F]{6}$") | not) | .name + ": " + .color' .github/config/labels.yml)
             
             if [ -z "$invalid_colors" ]; then
               echo "✅ All colors use valid 6-digit hex format"
@@ -111,8 +111,8 @@ jobs:
             echo "🔍 Checking color accessibility..."
             
             # Check for problematic colors (too light/dark)
-            light_colors=$(yq eval '.[] | select(.color as $c | ($c | ascii_downcase) | test("^(ffffff|f{5,6}|e{5,6})")) | .name + ": #" + .color' .github/labels.yml)
-            very_dark_colors=$(yq eval '.[] | select(.color as $c | ($c | ascii_downcase) | test("^(000000|0{5,6}|1{5,6})")) | .name + ": #" + .color' .github/labels.yml)
+            light_colors=$(yq eval '.[] | select(.color as $c | ($c | ascii_downcase) | test("^(ffffff|f{5,6}|e{5,6})")) | .name + ": #" + .color' .github/config/labels.yml)
+            very_dark_colors=$(yq eval '.[] | select(.color as $c | ($c | ascii_downcase) | test("^(000000|0{5,6}|1{5,6})")) | .name + ": #" + .color' .github/config/labels.yml)
             
             if [ -n "$light_colors" ]; then
               echo "⚠️ Very light colors (may have contrast issues):"
@@ -128,17 +128,17 @@ jobs:
             echo "🎨 Checking color group consistency..."
             
             # Priority colors should be distinct
-            priority_colors=$(yq eval '.[] | select(.name | startswith("priority:")) | .name + ": #" + .color' .github/labels.yml)
+            priority_colors=$(yq eval '.[] | select(.name | startswith("priority:")) | .name + ": #" + .color' .github/config/labels.yml)
             echo "🏷️ Priority label colors:"
             echo "$priority_colors"
             
             # Ruby version colors should be related
-            ruby_colors=$(yq eval '.[] | select(.name | startswith("ruby:")) | .name + ": #" + .color' .github/labels.yml)
+            ruby_colors=$(yq eval '.[] | select(.name | startswith("ruby:")) | .name + ": #" + .color' .github/config/labels.yml)
             echo "💎 Ruby version colors:"
             echo "$ruby_colors"
             
             # Platform colors should be distinct
-            platform_colors=$(yq eval '.[] | select(.name | startswith("platform:")) | .name + ": #" + .color' .github/labels.yml)
+            platform_colors=$(yq eval '.[] | select(.name | startswith("platform:")) | .name + ": #" + .color' .github/config/labels.yml)
             echo "🖥️ Platform colors:"
             echo "$platform_colors"
             
@@ -197,7 +197,7 @@ jobs:
       - name: "🔄 Test Labels Synchronization (Dry Run)"
         uses: crazy-max/ghaction-github-labeler@v5
         with:
-          yaml-file: .github/labels.yml
+          yaml-file: .github/config/labels.yml
           dry-run: true
         env:
           GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -278,7 +278,7 @@ jobs:
           echo ""
           echo "💡 Next steps:"
           echo "  1. Review missing standard labels"
-          echo "  2. Update .github/labels.yml if needed"
+          echo "  2. Update .github/config/labels.yml if needed"
           echo "  3. Check color accessibility with .github/config/LABELS_COLOR_GUIDE.md"
           echo "  4. Run actual sync in production workflow"
           echo "  5. Test auto-labeling functionality" 

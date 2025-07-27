@@ -1,0 +1,135 @@
+name: Standardized Notifications
+description: 'Send standardized notifications for workflow events using official Slack action'
+
+inputs:
+  slack-bot-token:
+    description: 'Slack bot token for API calls'
+    required: false
+  slack-channel-id:
+    description: 'Slack channel ID to send notifications'
+    required: false
+  message:
+    description: 'Notification message'
+    required: true
+  status:
+    description: 'Status (success, failure, warning)'
+    required: true
+  github-token:
+    description: 'GitHub token for API calls'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: 📢 Prepare notification data
+      shell: bash
+      run: |
+        set -euo pipefail
+        
+        # Set status emoji and color based on status
+        case "${{ inputs.status }}" in
+          success)
+            EMOJI="✅"
+            COLOR="good"
+            ;;
+          failure)
+            EMOJI="❌"
+            COLOR="danger"
+            ;;
+          warning)
+            EMOJI="⚠️"
+            COLOR="warning"
+            ;;
+          *)
+            EMOJI="ℹ️"
+            COLOR="#0066cc"
+            ;;
+        esac
+        
+        # Export environment variables for use in Slack action
+        echo "NOTIFICATION_EMOJI=$EMOJI" >> $GITHUB_ENV
+        echo "NOTIFICATION_COLOR=$COLOR" >> $GITHUB_ENV
+        
+        # Format workflow run URL
+        WORKFLOW_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        echo "WORKFLOW_URL=$WORKFLOW_URL" >> $GITHUB_ENV
+        
+        # Format commit info
+        COMMIT_SHORT="${{ github.sha }}"
+        COMMIT_SHORT="${COMMIT_SHORT:0:7}"
+        echo "COMMIT_SHORT=$COMMIT_SHORT" >> $GITHUB_ENV
+    
+    - name: 💬 Send Slack notification
+      if: inputs.slack-bot-token != '' && inputs.slack-channel-id != ''
+      uses: slackapi/slack-github-action@v1.27.0
+      with:
+        channel-id: ${{ inputs.slack-channel-id }}
+        payload: |
+          {
+            "text": "${{ env.NOTIFICATION_EMOJI }} ${{ github.workflow }} - ${{ inputs.status }}",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "${{ env.NOTIFICATION_EMOJI }} ${{ github.workflow }}"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Repository:*\n${{ github.repository }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Status:*\n${{ inputs.status }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Branch:*\n${{ github.ref_name }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Commit:*\n<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ env.COMMIT_SHORT }}>"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Message:*\n${{ inputs.message }}"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Workflow Run"
+                    },
+                    "url": "${{ env.WORKFLOW_URL }}",
+                    "style": "primary"
+                  }
+                ]
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack-bot-token }}
+    
+    - name: ℹ️ Log notification status
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.slack-bot-token }}" ] && [ -n "${{ inputs.slack-channel-id }}" ]; then
+          echo "✅ Slack notification sent successfully"
+          echo "📱 Channel: ${{ inputs.slack-channel-id }}"
+          echo "📝 Message: ${{ inputs.message }}"
+          echo "🔗 Workflow: ${{ env.WORKFLOW_URL }}"
+        else
+          echo "ℹ️ Slack notification skipped (missing token or channel)"
+        fi

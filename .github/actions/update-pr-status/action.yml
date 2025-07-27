@@ -1,0 +1,146 @@
+name: Update PR Status Comment
+description: 'Update consolidated PR status comment with workflow results'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API calls'
+    required: true
+  workflow-name:
+    description: 'Name of the workflow (CI, Security, Quality)'
+    required: true
+  status:
+    description: 'Status (success, failure, warning, running)'
+    required: true
+  summary:
+    description: 'Brief summary of results'
+    required: true
+  details-url:
+    description: 'URL to detailed results'
+    required: false
+  run-id:
+    description: 'GitHub Actions run ID'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: 📊 Update PR Status Comment
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          if (context.eventName !== 'pull_request') {
+            console.log('Not a pull request, skipping comment update');
+            return;
+          }
+          
+          const workflowName = '${{ inputs.workflow-name }}';
+          const status = '${{ inputs.status }}';
+          const summary = '${{ inputs.summary }}';
+          const detailsUrl = '${{ inputs.details-url }}';
+          const runId = '${{ inputs.run-id }}' || context.runId;
+          
+          // Generate status emoji
+          const statusEmoji = {
+            success: '✅',
+            failure: '❌', 
+            warning: '⚠️',
+            running: '🔄'
+          }[status] || '❓';
+          
+          // Define workflow order for consistent display
+          const workflowOrder = ['CI Pipeline', 'Security Scan', 'Quality Gate'];
+          
+          // Build details link
+          const detailsLink = detailsUrl 
+            ? `[View Results](${detailsUrl})`
+            : `[View Run](${context.payload.repository.html_url}/actions/runs/${runId})`;
+          
+          try {
+            // Get existing comments
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            // Find existing consolidated status comment
+            const existingComment = comments.find(comment => 
+              comment.body.includes('🚀 PR Status Dashboard') && 
+              comment.user.type === 'Bot'
+            );
+            
+            let workflowData = new Map();
+            
+            if (existingComment) {
+              // Parse existing table data
+              const tableRegex = /\| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|/g;
+              let match;
+              
+              while ((match = tableRegex.exec(existingComment.body)) !== null) {
+                const [, workflow, statusText, summaryText, detailsText] = match;
+                // Skip header row
+                if (workflow.trim() !== 'Workflow' && !workflow.includes('---')) {
+                  workflowData.set(workflow.trim(), {
+                    status: statusText.trim(),
+                    summary: summaryText.trim(),
+                    details: detailsText.trim()
+                  });
+                }
+              }
+            }
+            
+            // Update current workflow data
+            workflowData.set(workflowName, {
+              status: `${statusEmoji} ${status}`,
+              summary: summary,
+              details: detailsLink
+            });
+            
+            // Build table in defined order
+            let tableRows = [];
+            
+            // Add workflows in defined order first
+            for (const orderedWorkflow of workflowOrder) {
+              if (workflowData.has(orderedWorkflow)) {
+                const data = workflowData.get(orderedWorkflow);
+                tableRows.push(`| ${orderedWorkflow} | ${data.status} | ${data.summary} | ${data.details} |`);
+                workflowData.delete(orderedWorkflow);
+              }
+            }
+            
+            // Add any remaining workflows
+            for (const [workflow, data] of workflowData) {
+              tableRows.push(`| ${workflow} | ${data.status} | ${data.summary} | ${data.details} |`);
+            }
+            
+            // Build complete comment body
+            const tableHeader = '| Workflow | Status | Summary | Details |';
+            const tableSeparator = '|----------|--------|---------|---------|';
+            const commentBody = `## 🚀 PR Status Dashboard\n\n${tableHeader}\n${tableSeparator}\n${tableRows.join('\n')}\n\n---\n*Status updated automatically*`;
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: commentBody
+              });
+              
+              console.log(`Updated existing PR status comment with ${workflowName} results`);
+              
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+              
+              console.log(`Created new PR status comment with ${workflowName} results`);
+            }
+            
+          } catch (error) {
+            console.error('Error updating PR status comment:', error);
+            throw error;
+          }

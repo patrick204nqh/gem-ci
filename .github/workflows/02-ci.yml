@@ -104,8 +104,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['3.2', '3.3']
-        os: [ubuntu-latest, macos-latest]
+        ruby: ['3.3']
+        os: [ubuntu-latest]
         
     steps:
       - name: "📥 Checkout Repository"
@@ -186,6 +186,33 @@ jobs:
     if: always()
     
     steps:
+      - name: "📥 Checkout Repository"
+        uses: actions/checkout@v4
+        
+      - name: "🔑 Generate GitHub App Token"
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+        
+      - name: "📊 Update PR Status"
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/update-pr-status
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          workflow-name: "CI Pipeline"
+          status: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'success' || 'failure' }}
+          summary: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'All tests passed, gem built successfully' || 'Some CI checks failed' }}
+
+      - name: "📢 Notify CI Status"
+        uses: ./.github/actions/notification
+        with:
+          message: "CI Pipeline completed for ${{ github.ref_name }}"
+          status: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'success' || 'failure' }}
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+        
       - name: "📋 Create Summary"
         uses: actions/github-script@v7
         with:

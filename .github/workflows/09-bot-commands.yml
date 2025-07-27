@@ -1,0 +1,148 @@
+# 📋 Workflow: Bot Command Handler
+# 🎯 Purpose: Handle basic bot commands from issue/PR comments
+# 🔄 Triggers: Issue/PR comments with /gem-ci commands
+# 📦 Outputs: Automated responses
+# ⏱️ Duration: ~1 minute
+# 🔗 Dependencies: GitHub App token
+
+name: 09 - Bot Commands
+
+on:
+  issue_comment:
+    types: [created]
+
+env:
+  RUBY_VERSION: "3.3"
+
+jobs:
+  # 🤖 Parse and handle bot commands
+  handle-command:
+    name: 🤖 Handle Bot Command
+    runs-on: ubuntu-latest
+    # Work with both issues and PRs that mention /gem-ci
+    if: contains(github.event.comment.body, '/gem-ci')
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔑 Generate GitHub App Token
+        id: app_token
+        uses: ./.github/actions/github-app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: 🤖 Process bot command
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          script: |
+            const comment = context.payload.comment.body.toLowerCase().trim();
+            const isPR = context.payload.issue.pull_request != null;
+            const issueNumber = context.payload.issue.number;
+            const author = context.payload.comment.user.login;
+            const commentId = context.payload.comment.id;
+            
+            console.log(`📝 Comment: "${comment}"`);
+            console.log(`📍 Context: ${isPR ? 'Pull Request' : 'Issue'} #${issueNumber}`);
+            console.log(`👤 Author: @${author}`);
+            
+            // React to show command was received
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId,
+              content: 'eyes'
+            });
+            
+            // Handle status command
+            if (comment.includes('/gem-ci status')) {
+              let statusText = `## 📊 Status Report\n\n`;
+              
+              if (isPR) {
+                // Get PR info and check status
+                const { data: pr } = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: issueNumber
+                });
+                
+                // Get check runs for the PR
+                const { data: checkRuns } = await github.rest.checks.listForRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: pr.head.sha
+                });
+                
+                statusText += `**PR**: #${issueNumber} (${pr.state})\n`;
+                statusText += `**Branch**: \`${pr.head.ref}\` → \`${pr.base.ref}\`\n`;
+                statusText += `**Mergeable**: ${pr.mergeable ? '✅' : '❌'}\n\n`;
+                
+                if (checkRuns.check_runs.length > 0) {
+                  statusText += `**Checks**:\n`;
+                  checkRuns.check_runs.slice(0, 5).forEach(check => {
+                    const emoji = check.conclusion === 'success' ? '✅' : 
+                                 check.conclusion === 'failure' ? '❌' : '🔄';
+                    statusText += `- ${emoji} ${check.name}\n`;
+                  });
+                } else {
+                  statusText += `**Checks**: No checks found\n`;
+                }
+              } else {
+                // For issues, show recent workflow status
+                const { data: workflows } = await github.rest.actions.listWorkflowRunsForRepo({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  per_page: 3
+                });
+                
+                statusText += `**Recent Workflows**:\n`;
+                workflows.workflow_runs.slice(0, 3).forEach(run => {
+                  const emoji = run.conclusion === 'success' ? '✅' : 
+                               run.conclusion === 'failure' ? '❌' : '🔄';
+                  const date = new Date(run.created_at).toLocaleDateString();
+                  statusText += `- ${emoji} ${run.name} (${date})\n`;
+                });
+              }
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: statusText
+              });
+              
+              // React with rocket for status
+              await github.rest.reactions.createForIssueComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: commentId,
+                content: 'rocket'
+              });
+              
+              console.log('✅ Showed status');
+              return;
+            }
+            
+            // Handle unknown commands
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `❌ Sorry @${author}, I didn't understand that command.\n\n💡 Try \`/gem-ci status\` to see current status.`
+            });
+            
+            // React with confusion for unknown commands
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: commentId,
+              content: 'confused'
+            });
+            
+            console.log('❌ Unknown command handled');

@@ -1,0 +1,112 @@
+name: Add Reaction
+description: 'Add GitHub reaction to issues, PRs, releases, or comments'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API calls'
+    required: true
+  reaction-type:
+    description: 'Type of reaction (rocket, heart, eyes, +1, -1, laugh, confused, hooray)'
+    required: true
+    default: 'rocket'
+  target-type:
+    description: 'Target type (issue, release, comment)'
+    required: true
+  target-id:
+    description: 'Target ID (issue number, release ID, or comment ID)'
+    required: false
+  pr-number:
+    description: 'PR number (for issue reactions)'
+    required: false
+  release-id:
+    description: 'Release ID (for release reactions)'
+    required: false
+  comment-id:
+    description: 'Comment ID (for comment reactions)'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: 🎯 Add GitHub Reaction
+      shell: bash
+      run: |
+        echo "Adding ${{ inputs.reaction-type }} reaction to ${{ inputs.target-type }}"
+      
+    - name: 🎯 Add Reaction via GitHub API
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const reactionType = '${{ inputs.reaction-type }}';
+          const targetType = '${{ inputs.target-type }}';
+          const targetId = '${{ inputs.target-id }}';
+          const prNumber = '${{ inputs.pr-number }}';
+          const releaseId = '${{ inputs.release-id }}';
+          const commentId = '${{ inputs.comment-id }}';
+          
+          // Validate reaction type
+          const validReactions = ['rocket', 'heart', 'eyes', '+1', '-1', 'laugh', 'confused', 'hooray'];
+          if (!validReactions.includes(reactionType)) {
+            throw new Error(`Invalid reaction type: ${reactionType}. Valid options: ${validReactions.join(', ')}`);
+          }
+          
+          try {
+            switch (targetType) {
+              case 'issue':
+              case 'pr':
+                const issueNumber = targetId || prNumber;
+                if (!issueNumber) {
+                  throw new Error('Issue/PR number is required for issue/PR reactions');
+                }
+                
+                await github.rest.reactions.createForIssue({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: parseInt(issueNumber),
+                  content: reactionType
+                });
+                
+                console.log(`✅ Added ${reactionType} reaction to ${targetType} #${issueNumber}`);
+                break;
+                
+              case 'release':
+                const releaseIdToUse = targetId || releaseId;
+                if (!releaseIdToUse) {
+                  throw new Error('Release ID is required for release reactions');
+                }
+                
+                await github.rest.reactions.createForRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: parseInt(releaseIdToUse),
+                  content: reactionType
+                });
+                
+                console.log(`✅ Added ${reactionType} reaction to release ID ${releaseIdToUse}`);
+                break;
+                
+              case 'comment':
+                const commentIdToUse = targetId || commentId;
+                if (!commentIdToUse) {
+                  throw new Error('Comment ID is required for comment reactions');
+                }
+                
+                await github.rest.reactions.createForIssueComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: parseInt(commentIdToUse),
+                  content: reactionType
+                });
+                
+                console.log(`✅ Added ${reactionType} reaction to comment ID ${commentIdToUse}`);
+                break;
+                
+              default:
+                throw new Error(`Invalid target type: ${targetType}. Valid options: issue, pr, release, comment`);
+            }
+            
+          } catch (error) {
+            console.error(`❌ Failed to add ${reactionType} reaction to ${targetType}:`, error.message);
+            throw error;
+          }

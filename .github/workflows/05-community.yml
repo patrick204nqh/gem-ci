@@ -13,8 +13,8 @@ on:
   pull_request:
     types: [opened, closed]
   schedule:
-    # Run community management tasks daily at 1 AM UTC
-    - cron: '0 1 * * *'
+    # Run community management tasks weekly on Tuesdays at 1 AM UTC
+    - cron: '0 1 * * 2'
   workflow_dispatch:
 
 env:
