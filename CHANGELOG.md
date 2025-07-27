@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.3.0](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.2.1...gem-ci/v0.3.0) (2025-07-27)
+
+
+### 🚀 Features
+
+* Add GitFlow guide and workflow diagram for gem-ci projects ([bccdf0b](https://github.com/patrick204nqh/gem-ci/commit/bccdf0b056fe181ae0586f370a0a5da25dc65d77))
+* Add GitHub App token generation for PR status updates ([3662c2e](https://github.com/patrick204nqh/gem-ci/commit/3662c2e1366142051eb40a96a61944a2cb1bc72a))
+* Add local testing scripts for gem-ci workflows ([37ac022](https://github.com/patrick204nqh/gem-ci/commit/37ac0224a74d6410bc31f796333271a8330c6a47))
+* **ci:** Add PR status update action for CI, Security, and Quality workflows ([b9a42d9](https://github.com/patrick204nqh/gem-ci/commit/b9a42d97c4a8bd750bb87b29415929784e058261))
+* Enhance PR status comment with structured table for workflow results ([3f3520d](https://github.com/patrick204nqh/gem-ci/commit/3f3520df4f1263059fe8ac76379e0bccee2a8326))
+* Implement GitHub reaction actions for PRs, releases, and comments ([4fb4d24](https://github.com/patrick204nqh/gem-ci/commit/4fb4d24b4ca354128674f6b0ca3997cf977f0388))
+* Refactor bot command workflow to enhance command handling and response structure ([5262bc3](https://github.com/patrick204nqh/gem-ci/commit/5262bc38441df89ad1f51fb99f95a337e7e20ec2))
+* Update Ruby version in branch protection and push restrictions; add GitHub App token generation to ecosystem workflow ([611cd3e](https://github.com/patrick204nqh/gem-ci/commit/611cd3e37d64b5e290d73e9feebe28e306a4d6d6))
+
+
+### 🐛 Bug Fixes
+
+* Update label configuration file paths in workflows ([94937a3](https://github.com/patrick204nqh/gem-ci/commit/94937a345cd3b779474fa59bc2571a3b9f83d751))
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump json from 2.13.0 to 2.13.1 ([ae45255](https://github.com/patrick204nqh/gem-ci/commit/ae4525555a35d1a017b532568fed312fdde1841f))
+* **deps:** Bump rubocop from 1.78.0 to 1.79.0 in the development group ([01e4bc0](https://github.com/patrick204nqh/gem-ci/commit/01e4bc0da2e43ce48998756f1b18b743aa2d49cc))
+
+
+### 🤖 CI/CD
+
+* **deps:** Bump github/codeql-action from 2 to 3 in the security-actions group ([3a87434](https://github.com/patrick204nqh/gem-ci/commit/3a87434d016875f20d0d65342cad8c4261baa08a))
+* **deps:** Bump github/codeql-action in the security-actions group ([2cecda3](https://github.com/patrick204nqh/gem-ci/commit/2cecda34c7afa72919ab1f337dc94287e6b492c7))
+* **deps:** Bump github/super-linter from 4 to 7 in the quality-actions group ([394950e](https://github.com/patrick204nqh/gem-ci/commit/394950e4690a1e5b2560f8e24df3dc977ec55fec))
+* **deps:** Bump github/super-linter in the quality-actions group ([48573f1](https://github.com/patrick204nqh/gem-ci/commit/48573f1a80df84e1222ce72e33d0527b61a3bb72))
+* **deps:** Bump the github-actions group across 1 directory with 3 updates ([71f9254](https://github.com/patrick204nqh/gem-ci/commit/71f9254aa0670b7b0fa1f9fc5240bc7ecaff2cb1))
+* **deps:** Bump the github-actions group across 1 directory with 3 updates ([0c55db5](https://github.com/patrick204nqh/gem-ci/commit/0c55db53910128174b982ac9e4f9663605be6cae))
+* **saving-cost:** Add auto-labeling and repository labels configuration; update workflows for Slack notifications and command handling ([7cbd8de](https://github.com/patrick204nqh/gem-ci/commit/7cbd8de140a0182d06a095dbca009383587c8144))
+
 ## [0.2.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.2.0...gem-ci/v0.2.1) (2025-07-26)
 
 
