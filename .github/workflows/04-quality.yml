@@ -263,7 +263,7 @@ jobs:
         uses: actions/checkout@v4
         
       - name: 📢 Notify Quality Gate Status
-        uses: ./.github/workflows/shared/notification
+        uses: ./.github/actions/notification
         with:
           message: "Quality Gate completed for ${{ github.ref_name }}"
           status: ${{ needs.linting.result == 'success' && needs.rubocop.result == 'success' && needs.documentation.result == 'success' && needs.complexity-analysis.result == 'success' && 'success' || 'failure' }}

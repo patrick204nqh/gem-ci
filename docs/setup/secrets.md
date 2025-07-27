@@ -9,13 +9,13 @@ This guide walks you through setting up all required secrets for gem-ci workflow
 
 The gem-ci workflows require the following secrets:
 
-| Secret | Purpose | Required | Setup Section |
-|--------|---------|----------|---------------|
-| `APP_ID` | GitHub App ID for branded automation | ✅ Yes | Step 1-2 |
-| `PRIVATE_KEY` | GitHub App private key | ✅ Yes | Step 1-2 |
-| `SLACK_BOT_TOKEN` | Slack bot token for notifications | ❌ Optional | Step 3 |
-| `SLACK_CHANNEL_ID` | Slack channel ID | ❌ Optional | Step 3 |
-| `RUBYGEMS_API_KEY` | RubyGems publishing key | ❌ Optional | Step 4 |
+| Secret             | Purpose                              | Required   | Setup Section |
+| ------------------ | ------------------------------------ | ---------- | ------------- |
+| `APP_ID`           | GitHub App ID for branded automation | ✅ Yes      | Step 1-2      |
+| `PRIVATE_KEY`      | GitHub App private key               | ✅ Yes      | Step 1-2      |
+| `SLACK_BOT_TOKEN`  | Slack bot token for notifications    | ❌ Optional | Step 3        |
+| `SLACK_CHANNEL_ID` | Slack channel ID                     | ❌ Optional | Step 3        |
+| `RUBYGEMS_API_KEY` | RubyGems publishing key              | ❌ Optional | Step 4        |
 
 ## 📋 Prerequisites
 

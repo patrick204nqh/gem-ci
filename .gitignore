@@ -9,3 +9,13 @@
 
 # rspec failure tracking
 .rspec_status
+
+# Local testing files (keep .example files)
+.secrets
+.env
+.env.local
+.env.test
+.env.dev
+.envrc
+test-event.json
+*-test.env

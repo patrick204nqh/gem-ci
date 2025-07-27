@@ -199,7 +199,7 @@ jobs:
           summary: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'All tests passed, gem built successfully' || 'Some CI checks failed' }}
           
       - name: "📢 Notify CI Status"
-        uses: ./.github/workflows/shared/notification
+        uses: ./.github/actions/notification
         with:
           message: "CI Pipeline completed for ${{ github.ref_name }}"
           status: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'success' || 'failure' }}

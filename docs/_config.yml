@@ -1,0 +1,60 @@
+title: gem-ci Documentation
+description: The Ultimate Ruby Gem Automation Showcase
+url: "https://patrick204nqh.github.io"
+baseurl: "/gem-ci"
+
+theme: minima
+
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+header_pages:
+  - setup/secrets.md
+  - guides/local-testing.md
+  - workflows/overview.md
+  - guides/customization.md
+
+collections:
+  guides:
+    output: true
+    permalink: /:collection/:name/
+  setup:
+    output: true
+    permalink: /:collection/:name/
+  workflows:
+    output: true
+    permalink: /:collection/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "guides"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "setup"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "workflows"
+    values:
+      layout: "default"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
