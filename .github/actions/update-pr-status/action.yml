@@ -48,11 +48,13 @@ runs:
             running: '🔄'
           }[status] || '❓';
           
-          // Build workflow section
-          const workflowSection = `### ${statusEmoji} ${workflowName}
-          **Status**: ${status}
-          **Summary**: ${summary}
-          ${detailsUrl ? `**Details**: [View Results](${detailsUrl})` : `**Details**: [View Run](${context.payload.repository.html_url}/actions/runs/${runId})`}`;
+          // Define workflow order for consistent display
+          const workflowOrder = ['CI Pipeline', 'Security Scan', 'Quality Gate'];
+          
+          // Build details link
+          const detailsLink = detailsUrl 
+            ? `[View Results](${detailsUrl})`
+            : `[View Run](${context.payload.repository.html_url}/actions/runs/${runId})`;
           
           try {
             // Get existing comments
@@ -68,29 +70,56 @@ runs:
               comment.user.type === 'Bot'
             );
             
-            let commentBody;
+            let workflowData = new Map();
             
             if (existingComment) {
-              // Update existing comment
-              let updatedBody = existingComment.body;
+              // Parse existing table data
+              const tableRegex = /\| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|/g;
+              let match;
               
-              // Replace existing workflow section or add new one
-              const workflowRegex = new RegExp(`### [✅❌⚠️🔄❓] ${workflowName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?(?=###|---|$)`, 'g');
-              
-              if (updatedBody.includes(workflowName)) {
-                updatedBody = updatedBody.replace(workflowRegex, workflowSection + '\n\n');
-              } else {
-                // Add new workflow section before footer
-                const footerIndex = updatedBody.indexOf('---\n*Status updated automatically*');
-                if (footerIndex !== -1) {
-                  updatedBody = updatedBody.substring(0, footerIndex) + workflowSection + '\n\n' + updatedBody.substring(footerIndex);
-                } else {
-                  updatedBody += '\n\n' + workflowSection;
+              while ((match = tableRegex.exec(existingComment.body)) !== null) {
+                const [, workflow, statusText, summaryText, detailsText] = match;
+                // Skip header row
+                if (workflow.trim() !== 'Workflow' && !workflow.includes('---')) {
+                  workflowData.set(workflow.trim(), {
+                    status: statusText.trim(),
+                    summary: summaryText.trim(),
+                    details: detailsText.trim()
+                  });
                 }
               }
-              
-              commentBody = updatedBody;
-              
+            }
+            
+            // Update current workflow data
+            workflowData.set(workflowName, {
+              status: `${statusEmoji} ${status}`,
+              summary: summary,
+              details: detailsLink
+            });
+            
+            // Build table in defined order
+            let tableRows = [];
+            
+            // Add workflows in defined order first
+            for (const orderedWorkflow of workflowOrder) {
+              if (workflowData.has(orderedWorkflow)) {
+                const data = workflowData.get(orderedWorkflow);
+                tableRows.push(`| ${orderedWorkflow} | ${data.status} | ${data.summary} | ${data.details} |`);
+                workflowData.delete(orderedWorkflow);
+              }
+            }
+            
+            // Add any remaining workflows
+            for (const [workflow, data] of workflowData) {
+              tableRows.push(`| ${workflow} | ${data.status} | ${data.summary} | ${data.details} |`);
+            }
+            
+            // Build complete comment body
+            const tableHeader = '| Workflow | Status | Summary | Details |';
+            const tableSeparator = '|----------|--------|---------|---------|';
+            const commentBody = `## 🚀 PR Status Dashboard\n\n${tableHeader}\n${tableSeparator}\n${tableRows.join('\n')}\n\n---\n*Status updated automatically*`;
+            
+            if (existingComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -101,14 +130,6 @@ runs:
               console.log(`Updated existing PR status comment with ${workflowName} results`);
               
             } else {
-              // Create new consolidated comment
-              commentBody = `## 🚀 PR Status Dashboard
-              
-              ${workflowSection}
-              
-              ---
-              *Status updated automatically*`;
-              
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
