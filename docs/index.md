@@ -40,6 +40,7 @@ description: The Ultimate Ruby Gem Automation Showcase
       <p>Understand our comprehensive automation</p>
       <ul>
         <li><a href="workflows/overview">🔄 Workflow Overview</a></li>
+        <li><a href="diagrams/ci-workflow-overview">🔄 CI Workflow</a></li>
         <li><a href="guides/gitflow">🔄 GitFlow Guide</a></li>
         <li><a href="guides/bot-commands">🤖 Bot Commands</a></li>
         <li><a href="guides/monitoring">📈 Monitoring</a></li>

@@ -299,10 +299,11 @@ graph TD
 
 ## 📚 Related Documentation
 
+- [CI Workflow Overview](../diagrams/ci-workflow-overview) - Complete visual workflow lifecycle
+- [GitFlow Diagram](../diagrams/gitflow-diagram) - Visual branching model 
 - [Local Testing Guide](../guides/local-testing) - Test workflows before deployment
 - [Bot Commands Guide](../guides/bot-commands) - Interactive workflow management
 - [Customization Guide](../guides/customization) - Adapt workflows for your needs
-- [Architecture Diagrams](../diagrams/ci-workflow-overview) - Visual workflow overview
 
 ---
 

@@ -7,7 +7,7 @@ description: Visual overview of the complete CI/CD workflow lifecycle for Ruby g
 
 ## Diagram 1: Repository Lifecycle & Tasks
 
-```mermaid
+<div class="mermaid">
 graph TD
     subgraph "🚀 Phase 1: Repository Setup"
         A1[📁 Create Repository] 
@@ -73,11 +73,11 @@ graph TD
     class C1,C2,C3,C4 deps
     class D1,D2,D3,D4,D5,D6 release
     class E1,E2,E3,E4 maintain
-```
+</div>
 
 ## Diagram 2: Lifecycle Tasks → CI/CD Workflows Mapping
 
-```mermaid
+<div class="mermaid">
 graph LR
     subgraph "📋 Repository Tasks"
         T1[⚙️ Configure Secrets & Settings]
@@ -135,7 +135,7 @@ graph LR
     
     class T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15 task
     class W1,W2,W3,W4,W5,W6,W7,W8,W9,W10 workflow
-```
+</div>
 
 ## 📈 Repository Lifecycle Timeline
 
