@@ -2,8 +2,11 @@ name: Standardized Notifications
 description: 'Send standardized notifications for workflow events'
 
 inputs:
-  webhook-url:
-    description: 'Slack webhook URL'
+  slack-bot-token:
+    description: 'Slack bot token for API calls'
+    required: false
+  slack-channel-id:
+    description: 'Slack channel ID to send notifications'
     required: false
   message:
     description: 'Notification message'
@@ -46,14 +49,15 @@ runs:
         echo "NOTIFICATION_COLOR=$COLOR" >> $GITHUB_ENV
         echo "NOTIFICATION_MESSAGE=${{ inputs.message }}" >> $GITHUB_ENV
     
-    - name: 💬 Send Slack notification
-      if: inputs.webhook-url != ''
+    - name: 💬 Send Slack notification via Bot Token
+      if: inputs.slack-bot-token != '' && inputs.slack-channel-id != ''
       shell: bash
       run: |
         set -euo pipefail
         
         PAYLOAD=$(cat <<EOF
         {
+          "channel": "${{ inputs.slack-channel-id }}",
           "text": "$NOTIFICATION_EMOJI Workflow Notification",
           "attachments": [
             {
@@ -65,7 +69,7 @@ runs:
                   "short": true
                 },
                 {
-                  "title": "Workflow",
+                  "title": "Workflow",  
                   "value": "${{ github.workflow }}",
                   "short": true
                 },
@@ -86,8 +90,8 @@ runs:
         EOF
         )
         
-        curl -X POST -H 'Content-type: application/json' \
+        curl -X POST \
+             -H "Authorization: Bearer ${{ inputs.slack-bot-token }}" \
+             -H "Content-type: application/json" \
              --data "$PAYLOAD" \
-             "${{ inputs.webhook-url }}"
-      env:
-        WEBHOOK_URL: ${{ inputs.webhook-url }}
+             "https://slack.com/api/chat.postMessage"
