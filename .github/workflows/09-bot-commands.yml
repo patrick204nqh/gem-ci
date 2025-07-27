@@ -112,15 +112,18 @@ jobs:
             core.setOutput('to_version', toVersion);
             core.setOutput('valid_command', validCommand);
             
-            // React to comment to show it was processed
-            if (validCommand === 'true') {
-              await github.rest.reactions.createForIssueComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: context.payload.comment.id,
-                content: 'eyes'
-              });
-            }
+            // Set output for reaction step
+            core.setOutput('valid_command', validCommand);
+            core.setOutput('comment_id', context.payload.comment.id);
+
+      - name: 👀 React to valid command
+        if: steps.parse.outputs.valid_command == 'true'
+        uses: ./.github/actions/add-reaction
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          reaction-type: 'eyes'
+          target-type: 'comment'
+          comment-id: ${{ steps.parse.outputs.comment_id }}
 
   revise-release:
     name: 🔄 Revise Release Type
@@ -207,13 +210,16 @@ jobs:
               body: `✅ Release type revised from **${fromVersion}** to **${toVersion}**!\n\nUpdated release PR: #${releasePR.number}\n\n*Note: The actual version calculation still depends on conventional commits. This is a documentation update.*`
             });
             
-            // React with success
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: '+1'
-            });
+            // Set output for success reaction
+            core.setOutput('comment_id', context.payload.comment.id);
+
+      - name: 👍 React with success
+        uses: ./.github/actions/add-reaction
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          reaction-type: '+1'
+          target-type: 'comment'
+          comment-id: ${{ github.event.comment.id }}
 
   help-command:
     name: 📚 Show Help
@@ -300,9 +306,13 @@ jobs:
               body: `❌ Sorry @${context.payload.comment.user.login}, I didn't understand that command.\n\nTry \`/gem-ci help\` to see available commands.`
             });
             
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'confused'
-            });
+            // Set output for confused reaction
+            core.setOutput('comment_id', context.payload.comment.id);
+
+      - name: 😕 React with confusion
+        uses: ./.github/actions/add-reaction
+        with:
+          github-token: ${{ steps.app_token.outputs.token }}
+          reaction-type: 'confused'
+          target-type: 'comment'
+          comment-id: ${{ github.event.comment.id }}

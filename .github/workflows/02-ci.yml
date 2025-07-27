@@ -204,7 +204,7 @@ jobs:
           workflow-name: "CI Pipeline"
           status: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'success' || 'failure' }}
           summary: ${{ (needs.test.result == 'success' && needs.parallel-jobs.result == 'success' && needs.build.result == 'success') && 'All tests passed, gem built successfully' || 'Some CI checks failed' }}
-          
+
       - name: "📢 Notify CI Status"
         uses: ./.github/actions/notification
         with:
