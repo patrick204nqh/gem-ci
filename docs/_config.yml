@@ -1,9 +1,14 @@
 title: gem-ci Documentation
-description: The Ultimate Ruby Gem Automation Showcase
+description: 💎 Comprehensive OSS automation showcase with battle-tested GitHub Actions
 url: "https://patrick204nqh.github.io"
 baseurl: "/gem-ci"
 
-theme: minima
+theme: jekyll-theme-cayman
+
+# Theme customization
+cayman:
+  github_repository_url: "https://github.com/patrick204nqh/gem-ci"
+  show_downloads: true
 
 markdown: kramdown
 highlighter: rouge

@@ -245,9 +245,7 @@ jobs:
             
             ### 🚀 What's Changed
             See the [full changelog](https://github.com/${{ github.repository }}/blob/${{ needs.release-please.outputs.tag_name }}/CHANGELOG.md) for details.
-            
-            ---
-            **Built with ❤️ using only battle-tested, high-reliability GitHub Actions**
+
           files: "*.gem"
           draft: false
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
