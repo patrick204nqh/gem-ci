@@ -151,7 +151,7 @@ jobs:
           reporter: java-junit
           
       - name: "Upload Coverage"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         if: matrix.ruby == '3.3' && matrix.os == 'ubuntu-latest'
         with:
           file: ./coverage/coverage.xml
