@@ -143,7 +143,7 @@ jobs:
         run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/rspec.xml
         
       - name: "Upload Test Results"
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: success() || failure()
         with:
           name: "RSpec Tests - Ruby ${{ matrix.ruby }} (${{ matrix.os }})"
