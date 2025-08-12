@@ -42,7 +42,7 @@ jobs:
     
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: "🔑 Generate cache key"
         id: cache-key
@@ -64,7 +64,7 @@ jobs:
         job: [lint, security, docs]
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: ${{ matrix.job == 'lint' && 0 || 1 }}
       
@@ -115,7 +115,7 @@ jobs:
         
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         
       - name: "🔧 Setup Environment"
         uses: ./.github/actions/setup-environment
@@ -166,7 +166,7 @@ jobs:
     
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         
       - name: "🔧 Setup Environment"
         uses: ./.github/actions/setup-environment
@@ -193,7 +193,7 @@ jobs:
     
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         
       - name: "🔑 Generate GitHub App Token"
         id: app_token
