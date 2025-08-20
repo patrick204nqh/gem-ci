@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.5.0](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.4.0...gem-ci/v0.5.0) (2025-08-20)
+
+
+### 🚀 Features
+
+* Enhance documentation with improved image handling and streamlined workflow descriptions ([a67bdab](https://github.com/patrick204nqh/gem-ci/commit/a67bdab6928a77f5cdf6312500d117a3e66e0778))
+* Remove bot command handler workflow ([e01b6d5](https://github.com/patrick204nqh/gem-ci/commit/e01b6d584572dcaa76b13e2d1376b9cb4be81ccf))
+* Revamp documentation layout and enhance content clarity ([94b2017](https://github.com/patrick204nqh/gem-ci/commit/94b20175117ac018b945770d23d868c8adb89ac8))
+* Update CI workflows to ignore documentation changes and add new logo image ([cd0d30f](https://github.com/patrick204nqh/gem-ci/commit/cd0d30f3b226ce9d49e81ab615252d7955a0050f))
+* Update documentation to include CI Workflow and GitFlow diagrams ([65438e4](https://github.com/patrick204nqh/gem-ci/commit/65438e4a538d513c471d4ccba7111f1e114cf728))
+* Update documentation workflows and bot command handling for improved responses and clarity ([5413db6](https://github.com/patrick204nqh/gem-ci/commit/5413db6dbd683e95c228a48ada17eb48dc78a0ac))
+* Update workflows to ignore documentation paths and disable bot command handling ([af81d10](https://github.com/patrick204nqh/gem-ci/commit/af81d10120883b8b48bea02d817ba7ed427b18f6))
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump json from 2.13.1 to 2.13.2 ([8ae9732](https://github.com/patrick204nqh/gem-ci/commit/8ae973260e288681ebca10ce31691f536ad9a2ee))
+* **deps:** Bump rubocop from 1.79.0 to 1.79.1 in the development group ([e086f18](https://github.com/patrick204nqh/gem-ci/commit/e086f18d2e9a19710add532d5b44c565246344ea))
+* **deps:** Bump the development group across 1 directory with 2 updates ([e860fb4](https://github.com/patrick204nqh/gem-ci/commit/e860fb401ac712c9159f1e40b84a2f6d2e89ad41))
+
+
+### 🤖 CI/CD
+
+* **deps:** Bump codecov/codecov-action from 3 to 5 ([46ca4b4](https://github.com/patrick204nqh/gem-ci/commit/46ca4b48a4df965c82e9a04310f9ab67d6e3756b))
+* **deps:** Bump codecov/codecov-action from 3 to 5 ([1f55fff](https://github.com/patrick204nqh/gem-ci/commit/1f55fffb56dba53f524f7a2dcdae723855b0272a))
+* **deps:** Bump dorny/test-reporter from 1 to 2 ([8af47c1](https://github.com/patrick204nqh/gem-ci/commit/8af47c11c135cae9c3043c22572ea1c5b65abdfb))
+* **deps:** Bump dorny/test-reporter from 1 to 2 ([c0d6566](https://github.com/patrick204nqh/gem-ci/commit/c0d65662609472ef7b0417772b62985ed697ad67))
+* **deps:** Bump peaceiris/actions-gh-pages from 3 to 4 ([b6dd928](https://github.com/patrick204nqh/gem-ci/commit/b6dd928a625ddee23e9294e0e354846f829818a2))
+* **deps:** Bump peaceiris/actions-gh-pages from 3 to 4 ([e5f7d67](https://github.com/patrick204nqh/gem-ci/commit/e5f7d67d82e2074153a4885432df49285b70b93b))
+* **deps:** Bump softprops/action-gh-release from 1 to 2 ([4458dab](https://github.com/patrick204nqh/gem-ci/commit/4458dab84ec0684ec5b89a5e49d9c8bc42806aba))
+* **deps:** Bump softprops/action-gh-release from 1 to 2 ([12b925a](https://github.com/patrick204nqh/gem-ci/commit/12b925a22df7abb8ef905c338cd760210ead1510))
+
 ## [0.4.0](https://github.com/patrick204nqh/gem-ci/compare/gem-ci-v0.3.0...gem-ci/v0.4.0) (2025-07-27)
 
 
