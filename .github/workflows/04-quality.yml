@@ -37,7 +37,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -91,7 +91,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔑 Generate GitHub App Token
         id: app_token
@@ -138,7 +138,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔑 Generate GitHub App Token
         id: app_token
@@ -183,7 +183,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔑 Generate GitHub App Token
         id: app_token
@@ -236,7 +236,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         
       - name: 📢 Notify Quality Gate Status
         uses: ./.github/actions/notification
@@ -254,14 +254,14 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 📥 Download Quality Reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: rubocop-results
           path: ./reports/
         continue-on-error: true
         
       - name: 📥 Download Complexity Report  
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: complexity-results
           path: ./reports/
