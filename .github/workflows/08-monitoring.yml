@@ -35,10 +35,10 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 📊 Analyze workflow performance
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -157,7 +157,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔍 Basic workflow monitoring
         run: |
@@ -177,7 +177,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🏥 Basic repository health check
         run: |

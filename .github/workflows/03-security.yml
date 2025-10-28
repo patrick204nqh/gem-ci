@@ -40,7 +40,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -73,7 +73,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔍 Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -108,7 +108,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -130,7 +130,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔍 Dependency Review
         uses: actions/dependency-review-action@v4
@@ -158,7 +158,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔑 Generate GitHub App Token
         id: app_token
@@ -177,7 +177,7 @@ jobs:
           summary: ${{ (needs.codeql-analysis.result == 'success' && needs.vulnerability-scan.result == 'success' && needs.secret-scan.result == 'success') && 'All security scans passed' || 'Some security checks failed' }}
 
       - name: 📊 Security Scan Summary
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
