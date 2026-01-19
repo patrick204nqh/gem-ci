@@ -7,7 +7,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
-    date (3.4.1)
+    date (3.5.1)
     diff-lcs (1.6.2)
     docile (1.4.1)
     erb (5.0.2)
