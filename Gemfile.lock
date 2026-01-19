@@ -7,7 +7,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.3)
-    date (3.4.1)
+    date (3.5.1)
     diff-lcs (1.6.2)
     docile (1.4.1)
     erb (5.0.2)
@@ -32,7 +32,7 @@ GEM
       prettyprint
     prettyprint (0.2.0)
     prism (1.7.0)
-    psych (5.2.6)
+    psych (5.3.1)
       date
       stringio
     racc (1.8.1)
