@@ -50,7 +50,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 🔑 Generate GitHub App Token
         id: app_token
@@ -79,7 +79,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -102,7 +102,7 @@ jobs:
           echo "Built gem: ${GEM_FILE}"
 
       - name: 📦 Upload gem artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: gem-package
           path: "*.gem"
@@ -125,7 +125,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -171,7 +171,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 💎 Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -180,7 +180,7 @@ jobs:
           bundler-cache: true
 
       - name: 📦 Download gem artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: gem-package
 
@@ -215,10 +215,10 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 📦 Download gem artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: gem-package
 
@@ -276,7 +276,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 📢 Post release announcement
         uses: actions/github-script@v8
@@ -337,7 +337,7 @@ jobs:
     
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         
       - name: 📢 Notify Release Status
         uses: ./.github/actions/notification

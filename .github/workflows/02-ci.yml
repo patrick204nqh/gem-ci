@@ -42,7 +42,7 @@ jobs:
     
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       
       - name: "🔑 Generate cache key"
         id: cache-key
@@ -64,7 +64,7 @@ jobs:
         job: [lint, security, docs]
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: ${{ matrix.job == 'lint' && 0 || 1 }}
       
@@ -115,7 +115,7 @@ jobs:
         
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         
       - name: "🔧 Setup Environment"
         uses: ./.github/actions/setup-environment
@@ -124,7 +124,7 @@ jobs:
           enable-bundler-cache: 'true'
           
       - name: "🔧 Cache Dependencies"
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             vendor/bundle
@@ -166,7 +166,7 @@ jobs:
     
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         
       - name: "🔧 Setup Environment"
         uses: ./.github/actions/setup-environment
@@ -179,7 +179,7 @@ jobs:
           ls -la *.gem
           
       - name: "📦 Upload Gem Artifact"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: gem-ci-${{ github.sha }}
           path: "*.gem"
@@ -193,7 +193,7 @@ jobs:
     
     steps:
       - name: "📥 Checkout Repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         
       - name: "🔑 Generate GitHub App Token"
         id: app_token
