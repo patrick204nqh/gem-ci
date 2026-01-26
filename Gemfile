@@ -13,6 +13,6 @@ gem "rspec_junit_formatter", "~> 0.6"
 gem "simplecov", "~> 0.22"
 gem "simplecov-cobertura", "~> 2.1"
 
-gem "flog", "~> 4.6"
+gem "flog", "~> 4.9"
 gem "rubocop", "~> 1.82"
 gem "yard", "~> 0.9"
