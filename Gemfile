@@ -14,5 +14,5 @@ gem "simplecov", "~> 0.22"
 gem "simplecov-cobertura", "~> 2.1"
 
 gem "flog", "~> 4.9"
-gem "rubocop", "~> 1.82"
+gem "rubocop", "~> 1.84"
 gem "yard", "~> 0.9"
