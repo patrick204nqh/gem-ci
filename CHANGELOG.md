@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.5.0...gem-ci/v0.5.1) (2026-02-23)
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump parser from 3.3.10.1 to 3.3.10.2 ([dfba2d1](https://github.com/patrick204nqh/gem-ci/commit/dfba2d1789c59603172a2db5f4e52bdb93721b7b))
+
 ## [0.5.0](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.4.0...gem-ci/v0.5.0) (2026-02-18)
 
 
