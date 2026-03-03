@@ -48,7 +48,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
         
       - name: "Sync Labels"
-        uses: crazy-max/ghaction-github-labeler@v5
+        uses: crazy-max/ghaction-github-labeler@v6
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           yaml-file: .github/config/labels.yml
