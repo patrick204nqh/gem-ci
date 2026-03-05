@@ -122,7 +122,7 @@ jobs:
           fi
           
       - name: 📤 Upload RuboCop Results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: rubocop-results
           path: /tmp/quality-reports/rubocop-results.json
@@ -158,7 +158,7 @@ jobs:
           bundle exec yard doc --output-dir docs/_site
 
       - name: 📤 Upload documentation artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: documentation
           path: docs/_site/
@@ -218,7 +218,7 @@ jobs:
           fi
 
       - name: 📤 Upload Complexity Results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: complexity-results
           path: complexity-report.md
@@ -254,14 +254,14 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 📥 Download Quality Reports
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: rubocop-results
           path: ./reports/
         continue-on-error: true
         
       - name: 📥 Download Complexity Report  
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: complexity-results
           path: ./reports/
