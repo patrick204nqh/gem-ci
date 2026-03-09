@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.5.0...gem-ci/v0.5.1) (2026-03-05)
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump parser from 3.3.10.1 to 3.3.10.2 ([dfba2d1](https://github.com/patrick204nqh/gem-ci/commit/dfba2d1789c59603172a2db5f4e52bdb93721b7b))
+* **deps:** Bump the development group with 2 updates ([0865377](https://github.com/patrick204nqh/gem-ci/commit/0865377ebddf08b29cfdadf63dd4a6cec13734bc))
+
+
+### 🤖 CI/CD
+
+* **deps:** Bump crazy-max/ghaction-github-labeler from 5 to 6 ([2ce4d5a](https://github.com/patrick204nqh/gem-ci/commit/2ce4d5ae4c1d604d515804e4738488e4bf3b4fb5))
+* **deps:** Bump the github-actions group with 2 updates ([ffabaf7](https://github.com/patrick204nqh/gem-ci/commit/ffabaf7f5ed9d557bb6b4cecb605b6aec86ffda7))
+* **deps:** Bump the github-actions group with 2 updates ([6993c92](https://github.com/patrick204nqh/gem-ci/commit/6993c92c8253d09c41ae5c3e634965bacd770cf5))
+
 ## [0.5.0](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.4.0...gem-ci/v0.5.0) (2026-02-18)
 
 
