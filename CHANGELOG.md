@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.5.1...gem-ci/v0.5.2) (2026-03-13)
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump mcp from 0.7.1 to 0.8.0 ([565585e](https://github.com/patrick204nqh/gem-ci/commit/565585e50ba8986cf8e090cf9fee6476583b55ec))
+* **deps:** Bump the development group across 1 directory with 2 updates ([20eaa29](https://github.com/patrick204nqh/gem-ci/commit/20eaa2957a4e30e52e3e54c906dd40f30d0aa703))
+
 ## [0.5.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.5.0...gem-ci/v0.5.1) (2026-03-05)
 
 
