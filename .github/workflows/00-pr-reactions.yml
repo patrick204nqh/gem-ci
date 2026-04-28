@@ -40,7 +40,7 @@ jobs:
 
       - name: 🔍 Check if all workflows passed
         id: check_workflows
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |

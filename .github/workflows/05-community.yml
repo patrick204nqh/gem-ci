@@ -92,7 +92,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🎉 Recognize contributor
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
@@ -160,7 +160,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 📊 Generate community health report
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const now = new Date();
@@ -251,7 +251,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🏷️ Smart issue labeling
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const issue = context.payload.issue;
@@ -313,7 +313,7 @@ jobs:
     
     steps:
       - name: 📊 Community Management Summary
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const jobs = [

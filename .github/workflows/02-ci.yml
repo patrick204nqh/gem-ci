@@ -220,7 +220,7 @@ jobs:
           slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
         
       - name: "📋 Create Summary"
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const needs = ${{ toJSON(needs) }};

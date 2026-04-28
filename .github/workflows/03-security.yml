@@ -177,7 +177,7 @@ jobs:
           summary: ${{ (needs.codeql-analysis.result == 'success' && needs.vulnerability-scan.result == 'success' && needs.secret-scan.result == 'success') && 'All security scans passed' || 'Some security checks failed' }}
 
       - name: 📊 Security Scan Summary
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |

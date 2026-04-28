@@ -277,7 +277,7 @@ jobs:
           summary: ${{ (needs.linting.result == 'success' && needs.rubocop.result == 'success' && needs.documentation.result == 'success' && needs.complexity-analysis.result == 'success') && 'All quality checks passed (4/4)' || 'Some quality checks failed' }}
 
       - name: 📊 Quality Gate Results (Internal)
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
