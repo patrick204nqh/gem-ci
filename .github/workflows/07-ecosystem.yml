@@ -97,7 +97,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 📊 Create or update dependency issue
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         if: github.event_name == 'schedule'
         with:
           github-token: ${{ steps.app_token.outputs.token }}
@@ -175,7 +175,7 @@ jobs:
 
       - name: 📊 Report compatibility results
         if: always()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
@@ -239,7 +239,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 📊 Post performance results
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
@@ -324,7 +324,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: 📊 Create documentation health issue
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
@@ -375,7 +375,7 @@ jobs:
     
     steps:
       - name: 🌐 Generate ecosystem health summary
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const jobs = [
