@@ -1,342 +1,334 @@
-(function() {
-  var clicked = null;
-  var searchTimeout = null;
-  var searchCache = [];
-  var caseSensitiveMatch = false;
-  var ignoreKeyCodeMin = 8;
-  var ignoreKeyCodeMax = 46;
-  var commandKey = 91;
+(() => {
+	let clicked = null;
+	let searchTimeout = null;
+	const searchCache = [];
+	let caseSensitiveMatch = false;
 
-  function query(selector, root) {
-    return (root || document).querySelector(selector);
-  }
+	function query(selector, root) {
+		return (root || document).querySelector(selector);
+	}
 
-  function queryAll(selector, root) {
-    return Array.prototype.slice.call(
-      (root || document).querySelectorAll(selector)
-    );
-  }
+	function queryAll(selector, root) {
+		return Array.prototype.slice.call(
+			(root || document).querySelectorAll(selector),
+		);
+	}
 
-  function isVisible(element) {
-    if (!element) return false;
-    if (window.getComputedStyle(element).display === "none") return false;
-    if (element.parentElement && element.parentElement !== document.body) {
-      return isVisible(element.parentElement);
-    }
-    return true;
-  }
+	function isVisible(element) {
+		if (!element) return false;
+		if (window.getComputedStyle(element).display === "none") return false;
+		if (element.parentElement && element.parentElement !== document.body) {
+			return isVisible(element.parentElement);
+		}
+		return true;
+	}
 
-  RegExp.escape = function(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  };
+	RegExp.escape = (text) => text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 
-  function ready(callback) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", callback, { once: true });
-    } else {
-      callback();
-    }
-  }
+	function ready(callback) {
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", callback, { once: true });
+		} else {
+			callback();
+		}
+	}
 
-  function escapeShortcut() {
-    document.addEventListener("keydown", function(event) {
-      if (event.key === "Escape") {
-        window.parent.postMessage("navEscape", "*");
-      }
-    });
-  }
+	function escapeShortcut() {
+		document.addEventListener("keydown", (event) => {
+			if (event.key === "Escape") {
+				window.parent.postMessage("navEscape", "*");
+			}
+		});
+	}
 
-  function clearSearchTimeout() {
-    clearTimeout(searchTimeout);
-    searchTimeout = null;
-  }
+	function clearSearchTimeout() {
+		clearTimeout(searchTimeout);
+		searchTimeout = null;
+	}
 
-  function setClicked(item) {
-    queryAll("#full_list li.clicked").forEach(function(node) {
-      node.classList.remove("clicked");
-    });
-    clicked = item;
-    if (clicked) clicked.classList.add("clicked");
-  }
+	function setClicked(item) {
+		queryAll("#full_list li.clicked").forEach((node) => {
+			node.classList.remove("clicked");
+		});
+		clicked = item;
+		if (clicked) clicked.classList.add("clicked");
+	}
 
-  function enableLinks() {
-    queryAll("#full_list li").forEach(function(item) {
-      item.addEventListener("click", function(event) {
-        var targetLink;
-        var mouseEvent;
-        var url;
+	function pathForItem(item) {
+		if (!item?.id || item.id.indexOf("object_") !== 0) return null;
+		return item.id.substring("object_".length);
+	}
 
-        setClicked(item);
-        event.stopPropagation();
+	function enableLinks() {
+		queryAll("#full_list li").forEach((item) => {
+			const itemRow = item.querySelector(":scope > .item");
 
-        if (window.origin === "null") {
-          if (event.target.tagName === "A") return true;
+			if (!itemRow) return;
 
-          targetLink = item.querySelector(":scope > .item .object_link a");
-          if (!targetLink) return false;
-          mouseEvent = new MouseEvent("click", {
-            bubbles: true,
-            cancelable: true,
-            view: event.view || window,
-            detail: event.detail,
-            screenX: event.screenX,
-            screenY: event.screenY,
-            clientX: event.clientX,
-            clientY: event.clientY,
-            ctrlKey: event.ctrlKey,
-            shiftKey: event.shiftKey,
-            altKey: event.altKey,
-            metaKey: event.metaKey,
-            button: event.button,
-            buttons: event.buttons,
-            relatedTarget: event.relatedTarget
-          });
-          targetLink.dispatchEvent(mouseEvent);
-          event.preventDefault();
-        } else {
-          url = item.querySelector(".object_link a").getAttribute("href");
-          try {
-            url = new URL(url, window.location.href).href;
-          } catch (error) {}
-          window.top.postMessage({ action: "navigate", url: url }, "*");
-        }
-        return false;
-      });
-    });
-  }
+			itemRow.addEventListener("click", (event) => {
+				let targetLink;
+				let url;
 
-  function toggleItem(toggle) {
-    var item = toggle.parentElement.parentElement;
-    var expanded = item.classList.contains("collapsed");
+				if (
+					event.defaultPrevented ||
+					event.button !== 0 ||
+					event.metaKey ||
+					event.ctrlKey ||
+					event.shiftKey ||
+					event.altKey
+				) {
+					return true;
+				}
 
-    item.classList.toggle("collapsed");
-    toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
-    highlight();
-  }
+				setClicked(item);
+				event.stopPropagation();
+				targetLink = event.target.closest("a");
+				if (!targetLink?.matches(".object_link a")) {
+					targetLink = item.querySelector(":scope > .item .object_link a");
+				}
+				if (!targetLink) return false;
 
-  function enableToggles() {
-    queryAll("#full_list a.toggle").forEach(function(toggle) {
-      toggle.addEventListener("click", function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        toggleItem(toggle);
-      });
+				event.preventDefault();
+				url = targetLink.getAttribute("href");
+				try {
+					url = new URL(url, window.location.href).href;
+				} catch (_error) {}
+				window.top.postMessage(
+					{ action: "navigate", url: url, path: pathForItem(item) },
+					"*",
+				);
+				return false;
+			});
+		});
+	}
 
-      toggle.addEventListener("keypress", function(event) {
-        if (event.key !== "Enter") return;
-        event.stopPropagation();
-        event.preventDefault();
-        toggleItem(toggle);
-      });
-    });
-  }
+	function toggleItem(toggle) {
+		const item = toggle.parentElement.parentElement;
+		const expanded = item.classList.contains("collapsed");
 
-  function populateSearchCache() {
-    queryAll("#full_list li .item").forEach(function(node) {
-      var link = query(".object_link a", node);
-      if (!link) return;
+		item.classList.toggle("collapsed");
+		toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+		highlight();
+	}
 
-      searchCache.push({
-        node: node,
-        link: link,
-        name: link.textContent,
-        fullName: link.getAttribute("title").split(" ")[0]
-      });
-    });
-  }
+	function enableToggles() {
+		queryAll("#full_list a.toggle").forEach((toggle) => {
+			toggle.addEventListener("click", (event) => {
+				event.stopPropagation();
+				event.preventDefault();
+				toggleItem(toggle);
+			});
 
-  function enableSearch() {
-    var input = query("#search input");
-    var fullList = query("#full_list");
+			toggle.addEventListener("keypress", (event) => {
+				if (event.key !== "Enter") return;
+				event.stopPropagation();
+				event.preventDefault();
+				toggleItem(toggle);
+			});
+		});
+	}
 
-    if (!input || !fullList) return;
+	function populateSearchCache() {
+		queryAll("#full_list li .item").forEach((node) => {
+			const link = query(".object_link a", node);
+			if (!link) return;
 
-    input.addEventListener("keyup", function(event) {
-      if (ignoredKeyPress(event)) return;
-      if (input.value === "") {
-        clearSearch();
-      } else {
-        performSearch(input.value);
-      }
-    });
+			searchCache.push({
+				node: node,
+				link: link,
+				name: link.textContent,
+				fullName: link.getAttribute("title").split(" ")[0],
+			});
+		});
+	}
 
-    fullList.insertAdjacentHTML(
-      "afterend",
-      "<div id='noresults' role='status' style='display: none'></div>"
-    );
-  }
+	function enableSearch() {
+		const input = query("#search input");
+		const fullList = query("#full_list");
 
-  function ignoredKeyPress(event) {
-    return (
-      (event.keyCode > ignoreKeyCodeMin && event.keyCode < ignoreKeyCodeMax) ||
-      event.keyCode === commandKey
-    );
-  }
+		if (!input || !fullList) return;
 
-  function clearSearch() {
-    clearSearchTimeout();
-    queryAll("#full_list .found").forEach(function(node) {
-      var link = query(".object_link a", node);
-      node.classList.remove("found");
-      link.textContent = link.textContent;
-    });
-    query("#full_list").classList.remove("insearch");
-    query("#content").classList.remove("insearch");
-    if (clicked) {
-      var current = clicked.parentElement;
-      while (current) {
-        if (current.tagName === "LI") current.classList.remove("collapsed");
-        if (current.id === "full_list") break;
-        current = current.parentElement;
-      }
-    }
-    highlight();
-  }
+		function updateSearchResults() {
+			if (input.value === "") {
+				clearSearch();
+			} else {
+				performSearch(input.value);
+			}
+		}
 
-  function performSearch(searchString) {
-    clearSearchTimeout();
-    query("#full_list").classList.add("insearch");
-    query("#content").classList.add("insearch");
-    query("#noresults").textContent = "";
-    query("#noresults").style.display = "none";
-    partialSearch(searchString, 0);
-  }
+		input.addEventListener("input", updateSearchResults);
+		input.addEventListener("change", updateSearchResults);
 
-  function partialSearch(searchString, offset) {
-    var lastRowClass = "";
-    var i;
+		fullList.insertAdjacentHTML(
+			"afterend",
+			"<div id='noresults' role='status' style='display: none'></div>",
+		);
+	}
 
-    for (i = offset; i < Math.min(offset + 50, searchCache.length); i += 1) {
-      var item = searchCache[i];
-      var searchName =
-        searchString.indexOf("::") !== -1 ? item.fullName : item.name;
-      var matchRegexp = new RegExp(
-        buildMatchString(searchString),
-        caseSensitiveMatch ? "" : "i"
-      );
+	function clearSearch() {
+		clearSearchTimeout();
+		queryAll("#full_list .found").forEach((node) => {
+			node.classList.remove("found");
+		});
+		query("#full_list").classList.remove("insearch");
+		query("#content").classList.remove("insearch");
+		if (clicked) {
+			let current = clicked.parentElement;
+			while (current) {
+				if (current.tagName === "LI") current.classList.remove("collapsed");
+				if (current.id === "full_list") break;
+				current = current.parentElement;
+			}
+		}
+		highlight();
+	}
 
-      if (!searchName.match(matchRegexp)) {
-        item.node.classList.remove("found");
-        item.link.textContent = item.link.textContent;
-      } else {
-        item.node.classList.add("found");
-        if (lastRowClass) item.node.classList.remove(lastRowClass);
-        item.node.classList.add(lastRowClass === "r1" ? "r2" : "r1");
-        lastRowClass = item.node.classList.contains("r1") ? "r1" : "r2";
-        item.link.innerHTML = item.name.replace(matchRegexp, "<strong>$&</strong>");
-      }
-    }
+	function performSearch(searchString) {
+		clearSearchTimeout();
+		query("#full_list").classList.add("insearch");
+		query("#content").classList.add("insearch");
+		query("#noresults").textContent = "";
+		query("#noresults").style.display = "none";
+		partialSearch(searchString, 0);
+	}
 
-    if (i === searchCache.length) {
-      searchDone();
-    } else {
-      searchTimeout = setTimeout(function() {
-        partialSearch(searchString, i);
-      }, 0);
-    }
-  }
+	function partialSearch(searchString, offset) {
+		let lastRowClass = "";
+		let i;
 
-  function searchDone() {
-    var found = queryAll("#full_list li").filter(isVisible).length;
+		for (i = offset; i < Math.min(offset + 50, searchCache.length); i += 1) {
+			const item = searchCache[i];
+			const searchName =
+				searchString.indexOf("::") !== -1 ? item.fullName : item.name;
+			const matchRegexp = new RegExp(
+				buildMatchString(searchString),
+				caseSensitiveMatch ? "" : "i",
+			);
 
-    searchTimeout = null;
-    highlight();
+			if (!searchName.match(matchRegexp)) {
+				item.node.classList.remove("found");
+			} else {
+				item.node.classList.add("found");
+				if (lastRowClass) item.node.classList.remove(lastRowClass);
+				item.node.classList.add(lastRowClass === "r1" ? "r2" : "r1");
+				lastRowClass = item.node.classList.contains("r1") ? "r1" : "r2";
+				item.link.innerHTML = item.name.replace(
+					matchRegexp,
+					"<strong>$&</strong>",
+				);
+			}
+		}
 
-    if (found === 0) {
-      query("#noresults").textContent = "No results were found.";
-    } else {
-      query("#noresults").textContent = "There are " + found + " results.";
-    }
-    query("#noresults").style.display = "block";
-    query("#content").classList.remove("insearch");
-  }
+		if (i === searchCache.length) {
+			searchDone();
+		} else {
+			searchTimeout = setTimeout(() => {
+				partialSearch(searchString, i);
+			}, 0);
+		}
+	}
 
-  function buildMatchString(searchString) {
-    var regexSearchString;
+	function searchDone() {
+		const found = queryAll("#full_list li").filter(isVisible).length;
 
-    caseSensitiveMatch = /[A-Z]/.test(searchString);
-    regexSearchString = RegExp.escape(searchString);
-    if (caseSensitiveMatch) {
-      regexSearchString +=
-        "|" +
-        searchString
-          .split("")
-          .map(function(character) {
-            return RegExp.escape(character);
-          })
-          .join(".+?");
-    }
-    return regexSearchString;
-  }
+		searchTimeout = null;
+		highlight();
 
-  function highlight() {
-    queryAll("#full_list li")
-      .filter(isVisible)
-      .forEach(function(item, index) {
-        item.classList.remove("even");
-        item.classList.remove("odd");
-        item.classList.add(index % 2 === 0 ? "odd" : "even");
-      });
-  }
+		if (found === 0) {
+			query("#noresults").textContent = "No results were found.";
+		} else {
+			query("#noresults").textContent = `There are ${found} results.`;
+		}
+		query("#noresults").style.display = "block";
+		query("#content").classList.remove("insearch");
+	}
 
-  function isInView(element) {
-    var rect = element.getBoundingClientRect();
-    var windowHeight =
-      window.innerHeight || document.documentElement.clientHeight;
-    return rect.left >= 0 && rect.bottom <= windowHeight;
-  }
+	function buildMatchString(searchString) {
+		let regexSearchString;
 
-  function expandTo(path) {
-    var target = document.getElementById("object_" + path);
+		caseSensitiveMatch = /[A-Z]/.test(searchString);
+		regexSearchString = RegExp.escape(searchString);
+		if (caseSensitiveMatch) {
+			regexSearchString +=
+				"|" +
+				searchString
+					.split("")
+					.map((character) => RegExp.escape(character))
+					.join(".+?");
+		}
+		return regexSearchString;
+	}
 
-    if (!target) return;
+	function highlight() {
+		queryAll("#full_list li")
+			.filter(isVisible)
+			.forEach((item, index) => {
+				item.classList.remove("even");
+				item.classList.remove("odd");
+				item.classList.add(index % 2 === 0 ? "odd" : "even");
+			});
+	}
 
-    target.classList.add("clicked");
-    target.classList.remove("collapsed");
+	function isInView(element) {
+		const rect = element.getBoundingClientRect();
+		const windowHeight =
+			window.innerHeight || document.documentElement.clientHeight;
+		return rect.left >= 0 && rect.bottom <= windowHeight;
+	}
 
-    var current = target.parentElement;
-    while (current && current.id !== "full_list") {
-      if (current.tagName === "LI") current.classList.remove("collapsed");
-      current = current.parentElement;
-    }
+	function expandTo(path) {
+		const target = document.getElementById(`object_${path}`);
 
-    queryAll("a.toggle", target).forEach(function(toggle) {
-      toggle.setAttribute("aria-expanded", "true");
-    });
+		if (!target) return;
 
-    current = target.parentElement;
-    while (current && current.id !== "full_list") {
-      if (current.tagName === "LI") {
-        var toggle = current.querySelector(":scope > div > a.toggle");
-        if (toggle) toggle.setAttribute("aria-expanded", "true");
-      }
-      current = current.parentElement;
-    }
+		setClicked(target);
+		target.classList.remove("collapsed");
 
-    if (!isInView(target)) {
-      window.scrollTo(
-        window.scrollX,
-        target.getBoundingClientRect().top + window.scrollY - 250
-      );
-      highlight();
-    }
-  }
+		let current = target.parentElement;
+		while (current && current.id !== "full_list") {
+			if (current.tagName === "LI") current.classList.remove("collapsed");
+			current = current.parentElement;
+		}
 
-  function windowEvents(event) {
-    var msg = event.data;
-    if (msg.action === "expand") {
-      expandTo(msg.path);
-    }
-    return false;
-  }
+		queryAll("a.toggle", target).forEach((toggle) => {
+			toggle.setAttribute("aria-expanded", "true");
+		});
 
-  window.addEventListener("message", windowEvents, false);
+		current = target.parentElement;
+		while (current && current.id !== "full_list") {
+			if (current.tagName === "LI") {
+				const toggle = current.querySelector(":scope > div > a.toggle");
+				if (toggle) toggle.setAttribute("aria-expanded", "true");
+			}
+			current = current.parentElement;
+		}
 
-  ready(function() {
-    escapeShortcut();
-    enableLinks();
-    enableToggles();
-    populateSearchCache();
-    enableSearch();
-  });
+		highlight();
+
+		if (!isInView(target)) {
+			window.scrollTo(
+				window.scrollX,
+				target.getBoundingClientRect().top + window.scrollY - 250,
+			);
+		}
+	}
+
+	function windowEvents(event) {
+		const msg = event.data;
+		if (msg.action === "expand") {
+			expandTo(msg.path);
+		}
+		return false;
+	}
+
+	window.addEventListener("message", windowEvents, false);
+
+	ready(() => {
+		escapeShortcut();
+		enableLinks();
+		enableToggles();
+		populateSearchCache();
+		enableSearch();
+		highlight();
+	});
 })();
