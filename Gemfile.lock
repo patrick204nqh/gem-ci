@@ -11,7 +11,7 @@ GEM
     date (3.5.1)
     diff-lcs (1.6.2)
     docile (1.4.1)
-    erb (4.0.4)
+    erb (4.0.4.1)
       cgi (>= 0.3.3)
     flog (4.9.4)
       path_expander (~> 2.0)
