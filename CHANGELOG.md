@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.5.2](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.5.1...gem-ci/v0.5.2) (2026-05-06)
+
+
+### 🔧 Dependencies
+
+* **deps:** Bump bigdecimal from 4.0.1 to 4.1.0 ([d43d0a2](https://github.com/patrick204nqh/gem-ci/commit/d43d0a2dd180aab22552e05dd724eba8b956c1bc))
+* **deps:** Bump irb from 1.17.0 to 1.18.0 ([8084393](https://github.com/patrick204nqh/gem-ci/commit/8084393e6eeb45e12184518c4a26caa1a3591f36))
+* **deps:** Bump mcp from 0.7.1 to 0.8.0 ([565585e](https://github.com/patrick204nqh/gem-ci/commit/565585e50ba8986cf8e090cf9fee6476583b55ec))
+* **deps:** Bump rubocop from 1.85.1 to 1.86.0 in the development group ([99ad23a](https://github.com/patrick204nqh/gem-ci/commit/99ad23a62d4ab7f8019df3207dd430e98bfc4a19))
+* **deps:** Bump the development group across 1 directory with 2 updates ([20eaa29](https://github.com/patrick204nqh/gem-ci/commit/20eaa2957a4e30e52e3e54c906dd40f30d0aa703))
+* **deps:** Bump the development group with 2 updates ([9acceaf](https://github.com/patrick204nqh/gem-ci/commit/9acceafc276104ce8867dc9c5f0f4d613ce33d56))
+* **deps:** Bump the development group with 2 updates ([0476365](https://github.com/patrick204nqh/gem-ci/commit/0476365c71a6a7c85ca3ec558056d26254ad1181))
+
+
+### 🤖 CI/CD
+
+* **deps:** Bump actions/github-script from 8 to 9 in the github-actions group ([fbf0047](https://github.com/patrick204nqh/gem-ci/commit/fbf0047aaf85225e5a888610258cea1d9c014117))
+* **deps:** Bump actions/github-script in the github-actions group ([e3ea760](https://github.com/patrick204nqh/gem-ci/commit/e3ea7608637f8881de20ae4e5474ed5e53e3a453))
+* **deps:** Bump codecov/codecov-action from 5 to 6 ([1dd1d1a](https://github.com/patrick204nqh/gem-ci/commit/1dd1d1a60b9bf08746e534f2d0282795c1d82e86))
+* **deps:** Bump dorny/test-reporter from 2 to 3 ([8de568e](https://github.com/patrick204nqh/gem-ci/commit/8de568e1780a54321a8e244afc621df4538ec4fb))
+* **deps:** Bump googleapis/release-please-action from 4 to 5 ([76a5a68](https://github.com/patrick204nqh/gem-ci/commit/76a5a685db343838addbcfe3a65d83b5ebe3b03e))
+* **deps:** Bump softprops/action-gh-release from 2 to 3 ([7b4c622](https://github.com/patrick204nqh/gem-ci/commit/7b4c6222a3b698aa9c68d16ba9848b3690bd0d71))
+
 ## [0.5.1](https://github.com/patrick204nqh/gem-ci/compare/gem-ci/v0.5.0...gem-ci/v0.5.1) (2026-03-05)
 
 
