@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gem-ci (0.5.1)
+    gem-ci (0.5.2)
 
 GEM
   remote: https://rubygems.org/
